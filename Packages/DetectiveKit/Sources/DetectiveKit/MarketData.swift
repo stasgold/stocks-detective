@@ -63,18 +63,20 @@ public struct YahooMarketData: MarketDataProvider {
 
     public func news(for symbol: String) async throws -> [NewsArticle] {
         let q = symbol.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? symbol
-        let urls = [
-            URL(string: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=\(q)&region=US&lang=en-US"),
-            URL(string: "https://news.google.com/rss/search?q=\(q)+stock&hl=en-US&gl=US&ceid=US:en"),
-        ].compactMap { $0 }
+        let feeds: [(url: URL?, defaultSource: String)] = [
+            (URL(string: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=\(q)&region=US&lang=en-US"), "Yahoo Finance"),
+            (URL(string: "https://news.google.com/rss/search?q=\(q)+stock&hl=en-US&gl=US&ceid=US:en"), "Google News"),
+        ]
         // Independent tasks, each awaited before returning.
         let session = self
-        let jobs = urls.map { url in Task { try? await session.get(url) } }
-        var feeds: [Data] = []
-        for job in jobs {
-            if let data = await job.value { feeds.append(data) }
+        let jobs = feeds.compactMap { f in f.url.map { url in (f.defaultSource, Task { try? await session.get(url) }) } }
+        var articles: [NewsArticle] = []
+        for (defaultSource, job) in jobs {
+            guard let data = await job.value else { continue }
+            articles += RSSParser.parse(data).map { a in
+                a.source.isEmpty ? NewsArticle(title: a.title, summary: a.summary, source: defaultSource, link: a.link, published: a.published) : a
+            }
         }
-        let articles = feeds.flatMap { RSSParser.parse($0) }
         return articles.sorted { ($0.published ?? .distantPast) > ($1.published ?? .distantPast) }
     }
 
