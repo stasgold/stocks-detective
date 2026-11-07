@@ -35,7 +35,7 @@ struct BriefingView: View {
                     .disabled(model.isBriefing || holdings.isEmpty)
                 }
             }
-            .task(id: holdings.count) {
+            .task(id: "\(model.generation)|\(holdings.count)") {
                 if model.briefing == nil, !holdings.isEmpty { await model.writeBriefing(inputs) }
             }
         }

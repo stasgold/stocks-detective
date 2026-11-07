@@ -42,7 +42,7 @@ struct PortfolioView: View {
             .navigationDestination(for: String.self) { symbol in
                 CaseDetailView(symbol: symbol)
             }
-            .task(id: holdings.map(\.symbol)) {
+            .task(id: "\(model.generation)|" + holdings.map(\.symbol).joined(separator: ",")) {
                 await model.refresh(inputs)
                 fillInNames()
             }

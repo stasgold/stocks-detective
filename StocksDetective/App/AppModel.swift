@@ -13,6 +13,11 @@ final class AppModel {
     var isBriefing = false
     var isRefreshing = false
     var lastRefresh: Date?
+    /// Bumped whenever cached data is thrown away (data source switched, portfolio reset),
+    /// so screens know to fetch again and late results from the old source are ignored.
+    private(set) var generation = 0
+    private var refreshingGeneration: Int?
+    private var queuedRefresh: [HoldingInput]?
 
     var demoMode: Bool {
         didSet {
@@ -42,6 +47,7 @@ final class AppModel {
     }
 
     func clearCaches() {
+        generation += 1
         cases = [:]
         reports = [:]
         failures = [:]
@@ -55,9 +61,22 @@ final class AppModel {
     /// Gather fresh evidence for every holding, write instant rule-based reports,
     /// then let Apple Intelligence re-investigate the most suspicious moves.
     func refresh(_ holdings: [HoldingInput]) async {
-        guard !isRefreshing, !holdings.isEmpty else { return }
+        guard !holdings.isEmpty else { return }
+        let gen = generation
+        if refreshingGeneration == gen {
+            // Already fetching from this source; run again afterwards with the latest list
+            // so holdings added mid-refresh (e.g. by an import) aren't skipped.
+            queuedRefresh = holdings
+            return
+        }
+        refreshingGeneration = gen
         isRefreshing = true
-        defer { isRefreshing = false }
+        defer {
+            if refreshingGeneration == gen {
+                refreshingGeneration = nil
+                isRefreshing = false
+            }
+        }
 
         // One independent task per holding, collected in order. (A task group here crashed
         // Release builds: the group was freed while fetches were still finishing.)
@@ -66,8 +85,10 @@ final class AppModel {
             (h.symbol, Task.detached(priority: .userInitiated) { try await builder.buildCase(for: h) })
         }
         for (symbol, job) in jobs {
+            let outcome = await job.result
+            guard gen == generation else { return } // data source changed meanwhile
             do {
-                let file = try await job.value
+                let file = try outcome.get()
                 cases[symbol] = file
                 failures[symbol] = nil
                 if reports[symbol]?.author != .appleIntelligence || reports[symbol].map({ Date().timeIntervalSince($0.createdAt) > 1800 }) == true {
@@ -85,7 +106,18 @@ final class AppModel {
             .sorted { abs($0.facts.zScore) > abs($1.facts.zScore) }
             .prefix(3)
         for file in suspects where reports[file.symbol]?.author != .appleIntelligence {
+            guard gen == generation else { return }
             await investigate(file.symbol)
+        }
+
+        // Holdings added while we were busy (e.g. by an import): fetch the ones still missing.
+        if let queued = queuedRefresh, gen == generation {
+            queuedRefresh = nil
+            if queued.contains(where: { cases[$0.symbol] == nil && failures[$0.symbol] == nil }) {
+                refreshingGeneration = nil
+                isRefreshing = false
+                await refresh(queued)
+            }
         }
     }
 

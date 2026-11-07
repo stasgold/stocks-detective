@@ -9,6 +9,25 @@ on:
         default: true
 
 jobs:
+  live-data:
+    name: Live prices and news (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-26]
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.os == 'ubuntu-latest' && 'swift:6.1-noble' || null }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Select Xcode 26
+        if: runner.os == 'macOS'
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort | tail -1)/Contents/Developer"
+      - name: Call live endpoints
+        working-directory: Packages/DetectiveKit
+        env:
+          LIVE_NETWORK: "1"
+        run: swift test --filter LiveDataTests 2>&1 | grep -E "PRICES|NEWS|FEED|CASE|REPORT|   - |STOCK|TODAY|BENCH|BETA|TYPICAL|VOLUME|STATISTICAL|HEADLINES|^- |error|failed|passed|Executed"
+
   testflight-crashes:
     name: Fetch TestFlight crash reports
     runs-on: macos-26
