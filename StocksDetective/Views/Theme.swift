@@ -68,6 +68,9 @@ struct AuthorBadge: View {
         case .appleIntelligence:
             Label("Apple Intelligence · on-device", systemImage: "apple.intelligence")
                 .font(.caption).foregroundStyle(.secondary)
+        case .privateCloud:
+            Label("Apple Intelligence · Private Cloud", systemImage: "lock.icloud")
+                .font(.caption).foregroundStyle(.secondary)
         case .ruleBased:
             Label("Quick read · rule-based", systemImage: "function")
                 .font(.caption).foregroundStyle(.secondary)

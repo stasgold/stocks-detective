@@ -91,7 +91,7 @@ final class AppModel {
                 let file = try outcome.get()
                 cases[symbol] = file
                 failures[symbol] = nil
-                if reports[symbol]?.author != .appleIntelligence || reports[symbol].map({ Date().timeIntervalSince($0.createdAt) > 1800 }) == true {
+                if reports[symbol]?.author.isAI != true || reports[symbol].map({ Date().timeIntervalSince($0.createdAt) > 1800 }) == true {
                     reports[symbol] = RuleBasedDetective.investigate(file)
                 }
             } catch {
@@ -105,7 +105,7 @@ final class AppModel {
             .filter { $0.facts.isSignificant }
             .sorted { abs($0.facts.zScore) > abs($1.facts.zScore) }
             .prefix(3)
-        for file in suspects where reports[file.symbol]?.author != .appleIntelligence {
+        for file in suspects where reports[file.symbol]?.author.isAI != true {
             guard gen == generation else { return }
             await investigate(file.symbol)
         }
@@ -135,6 +135,12 @@ final class AppModel {
         defer { isBriefing = false }
         let files = holdings.compactMap { cases[$0.symbol] }
         briefing = await ai.brief(snapshot: snapshot(for: holdings), cases: files, reports: reports)
+    }
+
+    /// Drop AI write-ups (e.g. after switching model) so cases are re-investigated; keep the data.
+    func clearReports() {
+        for (symbol, file) in cases { reports[symbol] = RuleBasedDetective.investigate(file) }
+        briefing = nil
     }
 
     func remove(_ symbol: String) {

@@ -36,7 +36,7 @@ public actor CaseBuilder {
     func marketNews() async -> [ScoredArticle] {
         if let c = marketNewsCache, Date().timeIntervalSince(c.1) < ttl { return c.0 }
         let raw = (try? await provider.marketNews()) ?? []
-        let ranked = NewsScorer.rank(raw, symbol: "market", companyName: nil, limit: 4)
+        let ranked = NewsScorer.rank(raw, symbol: "market", companyName: nil, limit: 6)
         marketNewsCache = (ranked, Date())
         return ranked
     }
@@ -62,7 +62,7 @@ public actor CaseBuilder {
         let marketNews = await marketNews()
 
         let facts = MovementAnalyzer.analyze(stock: stock, benchmark: bench, market: market)
-        let news = NewsScorer.rank(rawNews, symbol: symbol, companyName: name)
+        let news = NewsScorer.rank(rawNews, symbol: symbol, companyName: name, limit: 10)
         return CaseFile(symbol: symbol, companyName: name, sector: holding.sector, facts: facts,
                         news: news, marketNews: marketNews, series: stock)
     }
@@ -106,10 +106,10 @@ public struct PortfolioSnapshot: Sendable {
     /// Moves worth opening a case on.
     public var suspects: [Line] { lines.filter { abs($0.zScore) >= 1.5 && $0.character != .marketDriven } }
 
-    public func promptBrief(cases: [CaseFile]) -> String {
+    public func promptBrief(cases: [CaseFile], holdings: Int = 6) -> String {
         var out = ["PORTFOLIO today: \(fmt(dayChangePercent))% (\(fmt(dayPnL, 0)) USD), value \(Int(totalValue)) USD"]
         let caseBySymbol = Dictionary(cases.map { ($0.symbol, $0) }, uniquingKeysWith: { a, _ in a })
-        for l in topContributors.prefix(6) {
+        for l in topContributors.prefix(holdings) {
             let headline = caseBySymbol[l.symbol]?.news.first?.article.title ?? "no headline"
             let weight = totalValue > 0 ? l.value / totalValue * 100 : 0
             out.append("- \(l.symbol): \(fmt(l.dayChange))%, P&L \(fmt(l.dayPnL, 0)), weight \(Int(weight))%, \(l.character.label); top news: \(headline)")

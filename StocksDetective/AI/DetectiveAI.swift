@@ -103,54 +103,51 @@ final class DetectiveAI {
         }
     }
 
-    var isAvailable: Bool { status == .available }
+    /// Any Apple Intelligence model (on-device, or Private Cloud if chosen) can answer.
+    var isAvailable: Bool { ModelRouter.anyAvailable }
 
     func prewarm() {
-        guard isAvailable else { return }
+        guard ModelRouter.onDeviceAvailable else { return }
         LanguageModelSession(instructions: Self.instructions).prewarm()
     }
 
     func investigate(_ file: CaseFile) async -> InvestigationReport {
         let fallback = RuleBasedDetective.investigate(file)
-        guard isAvailable else { return fallback }
-        let session = LanguageModelSession(instructions: Self.instructions)
-        let prompt = """
-        Investigate this move. The statistical pre-read suggests '\(fallback.verdict.rawValue)'; overrule it only if the headlines clearly say otherwise.
+        let result = await ModelRouter.run(instructions: Self.instructions) { session, author in
+            // The cloud model has a 32K context, so give it the full evidence locker.
+            let brief = author == .privateCloud
+                ? file.promptBrief(headlines: 10, marketHeadlines: 6)
+                : file.promptBrief()
+            let prompt = """
+            Investigate this move. The statistical pre-read suggests '\(fallback.verdict.rawValue)'; overrule it only if the headlines clearly say otherwise.
 
-        \(file.promptBrief())
-        """
-        do {
-            let response = try await session.respond(
-                to: prompt,
-                generating: AIReport.self,
-                options: GenerationOptions(temperature: 0.3)
-            )
-            return Self.convert(response.content, symbol: file.symbol, facts: file.facts, fallback: fallback)
-        } catch {
-            return fallback
+            \(brief)
+            """
+            return try await session.respond(to: prompt, generating: AIReport.self, options: GenerationOptions(temperature: 0.3)).content
         }
+        guard let result else { return fallback }
+        let (report, author) = result
+        return Self.convert(report, symbol: file.symbol, facts: file.facts, fallback: fallback, author: author)
     }
 
     func brief(snapshot: PortfolioSnapshot, cases: [CaseFile], reports: [String: InvestigationReport]) async -> PortfolioBriefing {
         let fallback = Self.ruleBasedBriefing(snapshot: snapshot, reports: reports)
-        guard isAvailable, !cases.isEmpty else { return fallback }
-        let session = LanguageModelSession(instructions: Self.instructions)
-        let prompt = """
-        Write today's portfolio briefing. Focus on the holdings that moved the portfolio most and explain why.
+        guard !cases.isEmpty else { return fallback }
+        let result = await ModelRouter.run(instructions: Self.instructions) { session, author in
+            let prompt = """
+            Write today's portfolio briefing. Focus on the holdings that moved the portfolio most and explain why.
 
-        \(snapshot.promptBrief(cases: cases))
-        """
-        do {
-            let r = try await session.respond(to: prompt, generating: AIBriefing.self, options: GenerationOptions(temperature: 0.4))
-            let b = r.content
-            return PortfolioBriefing(headline: b.headline, summary: b.summary, keyFindings: b.keyFindings,
-                                     watchNext: b.watchNext, author: .appleIntelligence)
-        } catch {
-            return fallback
+            \(snapshot.promptBrief(cases: cases, holdings: author == .privateCloud ? 25 : 6))
+            """
+            return try await session.respond(to: prompt, generating: AIBriefing.self, options: GenerationOptions(temperature: 0.4)).content
         }
+        guard let result else { return fallback }
+        let (b, author) = result
+        return PortfolioBriefing(headline: b.headline, summary: b.summary, keyFindings: b.keyFindings,
+                                 watchNext: b.watchNext, author: author)
     }
 
-    static func convert(_ r: AIReport, symbol: String, facts: MovementFacts, fallback: InvestigationReport) -> InvestigationReport {
+    static func convert(_ r: AIReport, symbol: String, facts: MovementFacts, fallback: InvestigationReport, author: ReportAuthor) -> InvestigationReport {
         let verdict: Verdict = switch r.verdict {
         case .justified: .justified
         case .overreaction: .overreaction
@@ -168,7 +165,7 @@ final class DetectiveAI {
             verdictReasoning: r.verdictReasoning,
             watchNext: r.watchNext,
             confidence: r.confidence,
-            author: .appleIntelligence
+            author: author
         )
     }
 

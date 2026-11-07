@@ -51,7 +51,7 @@ struct CaseDetailView: View {
         }
         .task {
             // Opening a case always gets the full AI investigation.
-            if model.reports[symbol]?.author != .appleIntelligence, model.ai.isAvailable {
+            if model.reports[symbol]?.author.isAI != true, model.ai.isAvailable {
                 await model.investigate(symbol)
             }
         }

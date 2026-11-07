@@ -188,7 +188,7 @@ struct HoldingRow: View {
                         Label("Investigating…", systemImage: "apple.intelligence")
                             .font(.caption2).foregroundStyle(.secondary)
                             .symbolEffect(.pulse)
-                    } else if report.author == .appleIntelligence {
+                    } else if report.author.isAI {
                         Image(systemName: "apple.intelligence").font(.caption2).foregroundStyle(.secondary)
                     }
                 }

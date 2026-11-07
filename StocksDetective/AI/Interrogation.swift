@@ -59,25 +59,27 @@ struct ChatMessage: Identifiable, Hashable {
 final class Interrogation {
     var messages: [ChatMessage] = []
     var isThinking = false
-    private let session: LanguageModelSession?
+    private var session: LanguageModelSession?
+    private(set) var author: ReportAuthor?
     private let file: CaseFile
+    private let context: String
+    private let tools: [any Tool]
 
     init(file: CaseFile, report: InvestigationReport?, provider: any MarketDataProvider) {
         self.file = file
-        if case .available = SystemLanguageModel.default.availability {
-            let context = """
-            \(DetectiveAI.instructions)
-            You are now answering follow-up questions about this case. You may call tools to fetch prices or headlines for other tickers.
-            Keep answers under 120 words.
+        tools = [PriceHistoryTool(provider: provider), NewsLookupTool(provider: provider)]
+        context = """
+        \(DetectiveAI.instructions)
+        You are now answering follow-up questions about this case. You may call tools to fetch prices or headlines for other tickers.
+        Keep answers under 120 words.
 
-            CASE BRIEF
-            \(file.promptBrief())
-            YOUR EARLIER VERDICT: \(report?.verdict.label ?? "none") - \(report?.verdictReasoning ?? "")
-            """
-            session = LanguageModelSession(tools: [PriceHistoryTool(provider: provider), NewsLookupTool(provider: provider)],
-                                           instructions: context)
-        } else {
-            session = nil
+        CASE BRIEF
+        \(file.promptBrief())
+        YOUR EARLIER VERDICT: \(report?.verdict.label ?? "none") - \(report?.verdictReasoning ?? "")
+        """
+        if case let (s, a)? = ModelRouter.session(instructions: context, tools: tools) {
+            session = s
+            author = a
         }
     }
 
@@ -101,7 +103,15 @@ final class Interrogation {
             let response = try await session.respond(to: q)
             messages.append(ChatMessage(role: .detective, text: response.content))
         } catch {
-            messages.append(ChatMessage(role: .detective, text: "I couldn't finish that line of inquiry (\(error.localizedDescription)). Try rephrasing."))
+            // Cloud request failed (offline / limit): continue the conversation on-device.
+            if author == .privateCloud, case let (local, a)? = ModelRouter.session(instructions: context, tools: tools, preferCloud: false),
+               let response = try? await local.respond(to: q) {
+                self.session = local
+                author = a
+                messages.append(ChatMessage(role: .detective, text: response.content))
+            } else {
+                messages.append(ChatMessage(role: .detective, text: "I couldn't finish that line of inquiry (\(error.localizedDescription)). Try rephrasing."))
+            }
         }
     }
 }

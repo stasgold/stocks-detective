@@ -33,8 +33,13 @@ public struct Cause: Codable, Hashable, Sendable, Identifiable {
 }
 
 public enum ReportAuthor: String, Codable, Sendable {
+    /// Apple Intelligence, on-device model.
     case appleIntelligence
+    /// Apple Intelligence, Private Cloud Compute model.
+    case privateCloud
     case ruleBased
+
+    public var isAI: Bool { self != .ruleBased }
 }
 
 /// The detective's finished write-up for one holding.
@@ -95,7 +100,9 @@ public struct CaseFile: Codable, Hashable, Sendable {
 
     /// Compact, number-dense brief for the on-device model. Kept short on purpose:
     /// the system model has a small context window.
-    public func promptBrief() -> String {
+    /// - Parameters: headlines / marketHeadlines: how much news to include. The on-device model
+    ///   has a small context window; the cloud model can take much more.
+    public func promptBrief(headlines: Int = 5, marketHeadlines: Int = 3) -> String {
         let f = facts
         var lines: [String] = []
         lines.append("STOCK: \(symbol)\(companyName.map { " (\($0))" } ?? ""), sector benchmark \(f.benchmark)")
@@ -107,13 +114,13 @@ public struct CaseFile: Codable, Hashable, Sendable {
         lines.append("STATISTICAL READ: \(f.character.label)")
         lines.append("COMPANY HEADLINES (most relevant first):")
         if news.isEmpty { lines.append("- none found") }
-        for n in news.prefix(5) {
+        for n in news.prefix(headlines) {
             let tags = n.catalysts.isEmpty ? "" : " [\(n.catalysts.joined(separator: ", "))]"
             lines.append("- \(n.article.title)\(ageText(n.article.published))\(tags)")
         }
         if !marketNews.isEmpty {
             lines.append("MARKET HEADLINES:")
-            for n in marketNews.prefix(3) { lines.append("- \(n.article.title)") }
+            for n in marketNews.prefix(marketHeadlines) { lines.append("- \(n.article.title)") }
         }
         return lines.joined(separator: "\n")
     }
