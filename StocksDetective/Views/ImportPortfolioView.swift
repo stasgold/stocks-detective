@@ -9,7 +9,7 @@ struct ImportPortfolioView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var existing: [Holding]
 
-    @State private var text = ""
+    @State private var text = ProcessInfo.processInfo.environment["IMPORT_TEXT"] ?? ""
     @State private var replaceExisting = false
     @FocusState private var editorFocused: Bool
 

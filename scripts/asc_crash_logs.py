@@ -59,6 +59,15 @@ def main():
             path = f"out/crashes/build{build}-{n}.crash"
             open(path, "w").write(text)
             print(f"  saved {path} ({len(text)} chars)")
+            # Print only the technical part (exception + crashed thread), never tester details.
+            lines = text.splitlines()
+            keep = [l for l in lines if l.startswith(("Exception Type", "Exception Codes", "Termination Reason", "Crashed Thread", "Application Specific", "Exception Reason"))]
+            print("\n".join("    " + l for l in keep))
+            try:
+                i = next(n for n, l in enumerate(lines) if l.startswith("Thread") and "Crashed" in l)
+                print("\n".join("    " + l for l in lines[i:i + 25]))
+            except StopIteration:
+                pass
         else:
             print("  no crash log attached")
 

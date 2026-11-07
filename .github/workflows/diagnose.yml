@@ -11,16 +11,13 @@ jobs:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
     steps:
       - uses: actions/checkout@v5
+      - name: Write API key
+        run: bash scripts/write_asc_key.sh
       - name: Fetch
         run: |
-          KEY_ID=$(printf '%s' "$ASC_KEY_ID" | tr -d '[:space:]')
-          export ASC_KEY_ID="$KEY_ID" ASC_ISSUER_ID=$(printf '%s' "$ASC_ISSUER_ID" | tr -d '[:space:]')
-          export KEY_PATH="$RUNNER_TEMP/key.p8"
-          RAW=$(printf '%s' "$ASC_KEY_P8" | tr -d '\r')
-          if printf '%s' "$RAW" | grep -q "BEGIN PRIVATE KEY"; then printf '%b\n' "$RAW" > "$KEY_PATH"
-          else printf '%s' "$RAW" | tr -d '[:space:]' | base64 --decode > "$KEY_PATH"; fi
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install --quiet pyjwt cryptography
           "$RUNNER_TEMP/venv/bin/python" scripts/asc_crash_logs.py
@@ -42,46 +39,46 @@ jobs:
         run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort | tail -1)/Contents/Developer"
       - run: brew install xcodegen xcbeautify
       - run: xcodegen generate
-      - name: Build (Release, like TestFlight)
-        run: |
-          set -o pipefail
-          xcodebuild build -project StocksDetective.xcodeproj -scheme StocksDetective -configuration Release \
-            -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO | xcbeautify
-      - name: Boot simulator
+      - name: Pick simulator
         run: |
           UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
           echo "UDID=$UDID" >> "$GITHUB_ENV"
-          xcrun simctl boot "$UDID"
-          xcrun simctl bootstatus "$UDID" -b
-          xcrun simctl install "$UDID" build/Build/Products/Release-iphonesimulator/StocksDetective.app
-      - name: Launch and exercise
+      - name: Run import UI tests (Release build, like TestFlight)
         run: |
-          mkdir -p out
-          shot() { sleep "$2"; xcrun simctl io "$UDID" screenshot "out/$1.png" >/dev/null 2>&1 || true; }
-          alive() { xcrun simctl spawn "$UDID" launchctl list | grep -q "com.stocksdetective.app" && echo "$1: running" || echo "$1: NOT RUNNING (crashed?)"; }
-          # 1) Fresh launch, empty portfolio
-          xcrun simctl launch "$UDID" com.stocksdetective.app; shot 1-empty 8; alive "empty launch"
-          xcrun simctl terminate "$UDID" com.stocksdetective.app || true
-          # 2) Demo portfolio; then open a case via deep link argument
-          xcrun simctl launch "$UDID" com.stocksdetective.app -seedDemoPortfolio YES; shot 2-portfolio 12; alive "demo portfolio"
-          xcrun simctl terminate "$UDID" com.stocksdetective.app || true
-          xcrun simctl launch "$UDID" com.stocksdetective.app -openCase NVDA; shot 3-case 12; alive "case NVDA"
-          xcrun simctl terminate "$UDID" com.stocksdetective.app || true
-          xcrun simctl launch "$UDID" com.stocksdetective.app -openTab briefing; shot 4-briefing 10; alive "briefing"
-          xcrun simctl terminate "$UDID" com.stocksdetective.app || true
-          xcrun simctl launch "$UDID" com.stocksdetective.app -openTab import; shot 5-import 8; alive "import"
-          xcrun simctl terminate "$UDID" com.stocksdetective.app || true
-          xcrun simctl launch "$UDID" com.stocksdetective.app -openTab settings; shot 6-settings 6; alive "settings"
-      - name: Collect crash logs
+          set -o pipefail
+          xcodebuild test -project StocksDetective.xcodeproj -scheme StocksDetective -configuration Release \
+            -destination "id=$UDID" -resultBundlePath out/UITests.xcresult \
+            CODE_SIGNING_ALLOWED=NO ENABLE_TESTABILITY=YES | xcbeautify
+      - name: Crash summary
         if: always()
         run: |
-          mkdir -p out/crashes
-          find ~/Library/Logs/DiagnosticReports -name "StocksDetective*" -exec cp {} out/crashes/ \; 2>/dev/null || true
-          for f in out/crashes/*; do [ -f "$f" ] || continue; echo "== $f"; head -c 6000 "$f"; echo; done
-          ls out out/crashes
-      - uses: actions/upload-artifact@v5
-        if: always()
-        with:
-          name: simulator-smoke
-          path: out
-          retention-days: 3
+          xcrun xcresulttool get test-results tests --path out/UITests.xcresult 2>/dev/null | python3 -c "
+          import json,sys
+          def walk(n,d=0):
+              if n.get('result') in ('Failed',) or n.get('nodeType')=='Failure Message':
+                  print('  '*d + (n.get('nodeType','')+': '+n.get('name',''))[:1500])
+              for c in n.get('children',[]): walk(c,d+1)
+          for t in json.load(sys.stdin).get('testNodes',[]): walk(t)
+          " || true
+          for f in $(find ~/Library/Logs/DiagnosticReports -name "StocksDetective*" 2>/dev/null); do
+            echo "===== $f"
+            python3 - "$f" <<'PY'
+          import json, sys
+          raw = open(sys.argv[1]).read()
+          try:
+              body = json.loads(raw.split("\n", 1)[1])
+          except Exception:
+              print(raw[:5000]); sys.exit()
+          ex = body.get("exception", {}); print("Exception:", ex.get("type"), ex.get("signal"), ex.get("subtype", ""))
+          print("Termination:", body.get("termination", {}).get("indicator", ""))
+          for k in ("asi", "lastExceptionBacktrace"):
+              if k in body: print(k, json.dumps(body[k])[:1500])
+          images = body.get("usedImages", [])
+          for t in body.get("threads", []):
+              if t.get("triggered"):
+                  print("Crashed thread:", t.get("queue", ""))
+                  for fr in t.get("frames", [])[:25]:
+                      img = images[fr["imageIndex"]]["name"] if fr.get("imageIndex", -1) < len(images) else "?"
+                      print("  ", img, fr.get("symbol", hex(fr.get("imageOffset", 0))), fr.get("sourceFile", ""), fr.get("sourceLine", ""))
+          PY
+          done

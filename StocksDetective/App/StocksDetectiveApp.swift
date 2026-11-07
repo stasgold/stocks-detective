@@ -26,7 +26,9 @@ struct StocksDetectiveApp: App {
 enum SharedStore {
     static let container: ModelContainer = {
         do {
-            return try ModelContainer(for: Holding.self)
+            // UI tests start from a clean, throwaway store.
+            let inMemory = UserDefaults.standard.bool(forKey: "inMemoryStore")
+            return try ModelContainer(for: Holding.self, configurations: ModelConfiguration(isStoredInMemoryOnly: inMemory))
         } catch {
             fatalError("Could not open the portfolio store: \(error)")
         }
