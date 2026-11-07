@@ -7,6 +7,7 @@ struct PortfolioView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Holding.addedAt) private var holdings: [Holding]
     @State private var showingAdd = false
+    @State private var showingImport = false
 
     private var inputs: [HoldingInput] { holdings.map(\.input) }
 
@@ -22,17 +23,26 @@ struct PortfolioView: View {
             .navigationTitle("Stocks Detective")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add holding", systemImage: "plus") { showingAdd = true }
+                    Menu {
+                        Button("Add a holding", systemImage: "plus") { showingAdd = true }
+                        Button("Import from paste", systemImage: "doc.on.clipboard") { showingImport = true }
+                    } label: {
+                        Label("Add", systemImage: "plus")
+                    }
                 }
             }
             .sheet(isPresented: $showingAdd) {
                 AddHoldingView()
+            }
+            .sheet(isPresented: $showingImport) {
+                ImportPortfolioView()
             }
             .navigationDestination(for: String.self) { symbol in
                 CaseDetailView(symbol: symbol)
             }
             .task(id: holdings.map(\.symbol)) {
                 await model.refresh(inputs)
+                fillInNames()
             }
         }
     }
@@ -55,13 +65,23 @@ struct PortfolioView: View {
             }
             Disclaimer().listRowBackground(Color.clear)
         }
-        .refreshable { await model.refresh(inputs) }
+        .refreshable {
+            await model.refresh(inputs)
+            fillInNames()
+        }
     }
 
     /// Most surprising moves first: that's where the story is.
     private var sortedHoldings: [Holding] {
         holdings.sorted { a, b in
             abs(model.cases[a.symbol]?.facts.zScore ?? 0) > abs(model.cases[b.symbol]?.facts.zScore ?? 0)
+        }
+    }
+
+    /// Imported holdings start with just a ticker; use the company name once we have it.
+    private func fillInNames() {
+        for h in holdings where h.name == h.symbol {
+            if let name = model.cases[h.symbol]?.companyName, !name.isEmpty { h.name = name }
         }
     }
 
@@ -81,6 +101,8 @@ struct PortfolioView: View {
         } actions: {
             Button("Add a holding") { showingAdd = true }
                 .buttonStyle(.borderedProminent)
+            Button("Import from paste") { showingImport = true }
+                .buttonStyle(.bordered)
             Button("Try the demo portfolio") {
                 model.demoMode = true
                 for (s, n, sh, cb) in DemoPortfolio.holdings {

@@ -102,3 +102,40 @@ final class DetectiveKitTests: XCTestCase {
         XCTAssertEqual(snap.topContributors.count, 5)
     }
 }
+
+final class PortfolioImporterTests: XCTestCase {
+    func testBrokerTable() {
+        let text = """
+        HOLDINGS
+        SYM        QTY    PRICE($)    DAY%  DAY P&L(₪)
+        VOO        238      675.99  +0.30%       1,534
+        TSM        160      375.44  +6.33%      11,401
+        IVV         66      738.68  +0.34%         520
+        LLY         34     1354.00  -0.79%      -1,164
+        NVDA       210      186.64  +2.78%       3,376
+        AMZN       150      259.30  -0.35%        -435
+        ASML        25     1424.75  +5.02%       5,430
+        MSFT        64      530.61  -0.99%      -1,086
+        GOOGL       28      284.78  +0.78%         197
+        SPY          9      735.29  +0.31%          66
+        """
+        let r = PortfolioImporter.parse(text)
+        XCTAssertEqual(r.rows.map(\.symbol), ["VOO", "TSM", "IVV", "LLY", "NVDA", "AMZN", "ASML", "MSFT", "GOOGL", "SPY"])
+        XCTAssertEqual(r.rows.map(\.shares), [238, 160, 66, 34, 210, 150, 25, 64, 28, 9])
+        XCTAssertEqual(r.rows[3].price, 1354)
+        XCTAssertTrue(r.skipped.isEmpty)
+    }
+
+    func testOtherFormats() {
+        let r = PortfolioImporter.parse("""
+        Ticker,Shares,Cost
+        AAPL,10,150.5
+        brk.b\t3
+        $TSLA 1,200
+        AAPL 5
+        Total 1000
+        """)
+        XCTAssertEqual(r.rows.map(\.symbol), ["AAPL", "BRK.B", "TSLA"])
+        XCTAssertEqual(r.rows.map(\.shares), [15, 3, 1200])
+    }
+}

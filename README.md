@@ -33,6 +33,7 @@ All AI runs **on-device**: your portfolio never leaves your iPhone.
 - **Portfolio** – total value and today's P&L; each holding shows the *reason* for its move and a verdict, sorted by how surprising the move is.
 - **Case file** – verdict with confidence, what happened, "Market or company?" breakdown, suspects (causes), what to watch next, and the evidence locker (headlines).
 - **Daily Briefing** – one story for the whole portfolio and who moved it.
+- **Import** – paste a holdings table from your broker, a spreadsheet or notes (`+` › Import from paste); tickers and share counts are read automatically.
 - **Settings** – Apple Intelligence status, background alerts and sensitivity, demo data.
 
 ## Requirements
