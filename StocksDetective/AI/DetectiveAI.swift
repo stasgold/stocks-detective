@@ -125,7 +125,7 @@ final class DetectiveAI {
                 generating: AIReport.self,
                 options: GenerationOptions(temperature: 0.3)
             )
-            return Self.convert(response.content, symbol: file.symbol)
+            return Self.convert(response.content, symbol: file.symbol, facts: file.facts, fallback: fallback)
         } catch {
             return fallback
         }
@@ -150,7 +150,7 @@ final class DetectiveAI {
         }
     }
 
-    static func convert(_ r: AIReport, symbol: String) -> InvestigationReport {
+    static func convert(_ r: AIReport, symbol: String, facts: MovementFacts, fallback: InvestigationReport) -> InvestigationReport {
         let verdict: Verdict = switch r.verdict {
         case .justified: .justified
         case .overreaction: .overreaction
@@ -160,8 +160,9 @@ final class DetectiveAI {
         }
         return InvestigationReport(
             symbol: symbol,
-            headline: r.headline,
-            whatHappened: r.whatHappened,
+            // Keep the model's writing, but never a headline or summary that misstates the move.
+            headline: ReportValidator.contradicts(r.headline, facts: facts) ? fallback.headline : r.headline,
+            whatHappened: ReportValidator.contradicts(r.whatHappened, facts: facts) ? fallback.whatHappened : r.whatHappened,
             causes: r.causes.map { Cause(title: $0.title, detail: $0.detail, evidence: $0.evidence.isEmpty ? nil : $0.evidence) },
             verdict: verdict,
             verdictReasoning: r.verdictReasoning,

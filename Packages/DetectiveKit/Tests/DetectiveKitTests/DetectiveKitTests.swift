@@ -139,3 +139,44 @@ final class PortfolioImporterTests: XCTestCase {
         XCTAssertEqual(r.rows.map(\.shares), [15, 3, 1200])
     }
 }
+
+final class ChartTests: XCTestCase {
+    func testDemoChartsForEveryRange() async throws {
+        for range in ChartRange.allCases {
+            let c = try await DemoMarketData().chart(for: "AAPL", range: range)
+            XCTAssertGreaterThan(c.bars.count, 1, "\(range)")
+            XCTAssertNotNil(c.changePercent)
+            XCTAssertLessThan(c.priceDomain.lowerBound, c.priceDomain.upperBound)
+        }
+        let day = try await DemoMarketData().chart(for: "AAPL", range: .day)
+        XCTAssertEqual(day.changePercent!, -3.4, accuracy: 0.01, "1D change matches the case's day move")
+    }
+
+    func testParseYahooChart() throws {
+        let json = """
+        {"chart":{"result":[{"meta":{"currency":"USD","symbol":"TSM","chartPreviousClose":353.1,"previousClose":353.1},
+        "timestamp":[1,2,3],"indicators":{"quote":[{"open":[380,null,376],"high":[390,null,380],"low":[370,null,372],"close":[381,null,375.44],"volume":[100,null,300]}]}}]}}
+        """
+        let c = try YahooChartParser.parseChart(Data(json.utf8), symbol: "TSM", range: .day)
+        XCTAssertEqual(c.bars.count, 2)
+        XCTAssertEqual(c.bars[1].high, 380)
+        XCTAssertEqual(c.changePercent!, (375.44 / 353.1 - 1) * 100, accuracy: 1e-9)
+    }
+}
+
+final class ReportValidatorTests: XCTestCase {
+    func facts(day: Double) -> MovementFacts {
+        MovementFacts(symbol: "ASML", benchmark: "XLK", dayChange: day, weekChange: -9.01, monthChange: -19.5,
+                      benchmarkDayChange: 1.5, marketDayChange: 0.3, beta: 1.12, expectedMove: 1.7, excessMove: day - 1.7,
+                      typicalDailyMove: 2.6, zScore: day / 2.6, volumeRatio: 1.8, distanceFrom52wHigh: -28.38, character: .stockSpecific)
+    }
+
+    func testCatchesWrongDirectionAndNumbers() {
+        // The headline from the ASML screenshot: stock was up 5.02%.
+        XCTAssertTrue(ReportValidator.contradicts("ASML Stocks Fall 7.36% as Investors Question the Next Spending Cycle", facts: facts(day: 5.02)))
+        XCTAssertTrue(ReportValidator.contradicts("ASML jumps 12% on guidance", facts: facts(day: 5.02)))
+        XCTAssertFalse(ReportValidator.contradicts("ASML rebounds 5% after a 19.5% monthly slide", facts: facts(day: 5.02)))
+        XCTAssertFalse(ReportValidator.contradicts("ASML surges 5.0% on heavy volume", facts: facts(day: 5.02)))
+        XCTAssertTrue(ReportValidator.contradicts("ASML rallies on chip demand", facts: facts(day: -3)))
+    }
+}

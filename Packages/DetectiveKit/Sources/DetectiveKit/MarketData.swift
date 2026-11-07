@@ -21,6 +21,7 @@ public protocol MarketDataProvider: Sendable {
     func news(for symbol: String) async throws -> [NewsArticle]
     func marketNews() async throws -> [NewsArticle]
     func search(_ query: String) async throws -> [SymbolMatch]
+    func chart(for symbol: String, range: ChartRange) async throws -> ChartData
 }
 
 public enum MarketDataError: Error, LocalizedError {

@@ -56,3 +56,18 @@ final class LiveDataTests: XCTestCase {
         print("REPORT: \(report.verdict.label) — \(report.headline)")
     }
 }
+
+final class LiveChartTests: XCTestCase {
+    override func setUpWithError() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["LIVE_NETWORK"] == "1", "Set LIVE_NETWORK=1 to hit live endpoints")
+    }
+
+    func testEveryRange() async throws {
+        for range in ChartRange.allCases {
+            let c = try await YahooMarketData().chart(for: "TSM", range: range)
+            let withOHLC = c.bars.filter { $0.open != nil && $0.high != nil && $0.low != nil }.count
+            print("CHART TSM \(range.rawValue): \(c.bars.count) bars (\(withOHLC) with OHLC), \(c.bars.first!.date) → \(c.bars.last!.date), change \(String(format: "%+.2f", c.changePercent ?? 0))%, prevClose \(c.previousClose.map { "\($0)" } ?? "-")")
+            XCTAssertGreaterThan(c.bars.count, 1)
+        }
+    }
+}

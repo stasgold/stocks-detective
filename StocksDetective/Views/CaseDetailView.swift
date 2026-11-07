@@ -70,8 +70,7 @@ struct CaseDetailView: View {
                 ChangePill(value: file.facts.dayChange)
                 Spacer()
             }
-            PriceChart(points: Array(file.series.points.suffix(90)))
-                .frame(height: 160)
+            StockChartView(symbol: file.symbol)
             HStack {
                 stat("5 days", file.facts.weekChange)
                 stat("1 month", file.facts.monthChange)

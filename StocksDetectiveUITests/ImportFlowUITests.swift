@@ -40,6 +40,16 @@ final class ImportFlowUITests: XCTestCase {
         sleep(8)
         XCTAssertEqual(app.state, .runningForeground, "App crashed opening a case")
         snapshot(app, "case")
+        // Chart: switch ranges and drag across it like a user inspecting prices.
+        for r in ["5D", "1M", "1Y", "All", "1D"] {
+            let b = app.buttons[r]
+            if b.waitForExistence(timeout: 5) { b.tap(); sleep(2) }
+        }
+        let start = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.3))
+        let end = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.3))
+        start.press(forDuration: 0.4, thenDragTo: end)
+        XCTAssertEqual(app.state, .runningForeground, "App crashed using the chart")
+        snapshot(app, "chart")
     }
 
     func testImportIntoEmptyPortfolio() {

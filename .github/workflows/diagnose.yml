@@ -26,7 +26,7 @@ jobs:
         working-directory: Packages/DetectiveKit
         env:
           LIVE_NETWORK: "1"
-        run: swift test --filter LiveDataTests 2>&1 | grep -E "PRICES|NEWS|FEED|CASE|REPORT|   - |STOCK|TODAY|BENCH|BETA|TYPICAL|VOLUME|STATISTICAL|HEADLINES|^- |error|failed|passed|Executed"
+        run: swift test --filter Live 2>&1 | grep -E "CHART|PRICES|NEWS|FEED|CASE|REPORT|   - |STOCK|TODAY|BENCH|BETA|TYPICAL|VOLUME|STATISTICAL|HEADLINES|^- |error|failed|passed|Executed"
 
   testflight-crashes:
     name: Fetch TestFlight crash reports
