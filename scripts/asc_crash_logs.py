@@ -63,11 +63,13 @@ def main():
             lines = text.splitlines()
             keep = [l for l in lines if l.startswith(("Exception Type", "Exception Codes", "Termination Reason", "Crashed Thread", "Application Specific", "Exception Reason"))]
             print("\n".join("    " + l for l in keep))
-            try:
-                i = next(n for n, l in enumerate(lines) if l.startswith("Thread") and "Crashed" in l)
-                print("\n".join("    " + l for l in lines[i:i + 25]))
-            except StopIteration:
-                pass
+            # Every thread's frames (symbols only), so we can see which app code was running.
+            start = next((n for n, l in enumerate(lines) if l.startswith("Thread 0")), None)
+            stop = next((n for n, l in enumerate(lines) if "Thread State" in l), len(lines))
+            if start is not None:
+                for l in lines[start:stop]:
+                    if l.strip():
+                        print("    " + l.rstrip()[:200])
         else:
             print("  no crash log attached")
 

@@ -2,6 +2,11 @@ name: Diagnose crash
 
 on:
   workflow_dispatch:
+    inputs:
+      ui_tests:
+        description: Also run the Simulator UI tests
+        type: boolean
+        default: true
 
 jobs:
   testflight-crashes:
@@ -31,7 +36,8 @@ jobs:
           if-no-files-found: ignore
 
   simulator-smoke:
-    name: Launch in Simulator with demo portfolio
+    name: Import UI tests in Simulator
+    if: ${{ inputs.ui_tests }}
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
