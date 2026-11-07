@@ -81,9 +81,10 @@ public struct ChartData: Codable, Hashable, Sendable {
         self.previousClose = previousClose
     }
 
-    /// Price the period change is measured from: previous close for 1D, first bar otherwise.
+    /// Price the period change is measured from: the close just before the period starts
+    /// (how Yahoo Finance computes it), or the first bar when that isn't known.
     public var baseline: Double? {
-        if range == .day, let previousClose { return previousClose }
+        if let previousClose, previousClose > 0 { return previousClose }
         return bars.first?.close
     }
 
@@ -100,7 +101,8 @@ public struct ChartData: Codable, Hashable, Sendable {
     public var priceDomain: ClosedRange<Double> {
         var lo = bars.map { $0.low ?? $0.close }.min() ?? 0
         var hi = bars.map { $0.high ?? $0.close }.max() ?? 1
-        if range == .day, let p = previousClose { lo = min(lo, p); hi = max(hi, p) }
+        // Keep the dashed baseline on screen when it's near the prices (not for 5Y/All).
+        if let p = baseline, p >= lo * 0.85, p <= hi * 1.15 { lo = min(lo, p); hi = max(hi, p) }
         if hi <= lo { hi = lo + 1 }
         let pad = (hi - lo) * 0.06
         return (lo - pad)...(hi + pad)
