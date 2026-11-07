@@ -53,6 +53,25 @@ Download the **StocksDetective** artifact from the workflow run:
 - `StocksDetective-simulator.zip` – drag the `.app` onto a running Simulator.
 - `StocksDetective-unsigned.ipa` – sign it with your own certificate (e.g. Sideloadly, AltStore, or `codesign`) to install on a device.
 
+### TestFlight
+
+[`.github/workflows/testflight.yml`](.github/workflows/testflight.yml) archives, signs and uploads to TestFlight. Run it from **Actions › TestFlight › Run workflow**, or push a tag like `v1.0.0`. The build number is the workflow run number.
+
+One-time setup:
+
+1. In [App Store Connect](https://appstoreconnect.apple.com) create the app with bundle ID `com.stocksdetective.app` (or change `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml`).
+2. **Users and Access › Integrations › App Store Connect API**: create a Team key with the **Admin** role (needed for automatic signing). Download the `.p8`.
+3. In this repo, **Settings › Secrets and variables › Actions**, add:
+
+| Secret | Value |
+|---|---|
+| `APPLE_TEAM_ID` | 10-character Team ID (developer.apple.com › Membership) |
+| `ASC_KEY_ID` | The API key's Key ID |
+| `ASC_ISSUER_ID` | Issuer ID shown above the keys list |
+| `ASC_KEY_P8` | Full contents of the `.p8` file (or its base64) |
+
+Signing certificates and provisioning profiles are created automatically by Xcode using the API key.
+
 ### Locally
 
 ```sh
