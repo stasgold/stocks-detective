@@ -21,7 +21,7 @@ jobs:
       - name: Check secrets
         run: |
           missing=""
-          for s in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
             [ -z "${!s}" ] && missing="$missing $s"
           done
           if [ -n "$missing" ]; then
@@ -84,6 +84,33 @@ jobs:
             echo "ASC_ISSUER_ID=$ISSUER"
             echo "APPLE_TEAM_ID=$TEAM"
           } >> "$GITHUB_ENV"
+
+      - name: Resolve Team ID
+        run: |
+          if [[ "$APPLE_TEAM_ID" =~ ^[A-Z0-9]{10}$ ]]; then
+            echo "Using APPLE_TEAM_ID from secrets"
+            exit 0
+          fi
+          echo "::warning::APPLE_TEAM_ID is not a 10-character Team ID; looking it up from App Store Connect."
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet pyjwt cryptography
+          TEAM=$("$RUNNER_TEMP/venv/bin/python" - <<'PY'
+          import json, os, time, urllib.request, jwt
+          key = open(os.environ["KEY_PATH"]).read()
+          token = jwt.encode(
+              {"iss": os.environ["ASC_ISSUER_ID"], "iat": int(time.time()), "exp": int(time.time()) + 600, "aud": "appstoreconnect-v1"},
+              key, algorithm="ES256", headers={"kid": os.environ["ASC_KEY_ID"]})
+          url = "https://api.appstoreconnect.apple.com/v1/bundleIds?filter[identifier]=com.stocksdetective.app&fields[bundleIds]=identifier,seedId"
+          req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+          data = json.load(urllib.request.urlopen(req))["data"]
+          match = [d for d in data if d["attributes"]["identifier"] == "com.stocksdetective.app"]
+          if not match:
+              raise SystemExit("Bundle ID com.stocksdetective.app is not registered under this API key's team.")
+          print(match[0]["attributes"]["seedId"])
+          PY
+          )
+          echo "Found Team ID (length ${#TEAM}). Tip: update the APPLE_TEAM_ID secret to it."
+          echo "APPLE_TEAM_ID=$TEAM" >> "$GITHUB_ENV"
 
       - name: Archive
         run: |
