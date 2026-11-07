@@ -59,25 +59,22 @@ final class AppModel {
         isRefreshing = true
         defer { isRefreshing = false }
 
+        // One independent task per holding, collected in order. (A task group here crashed
+        // Release builds: the group was freed while fetches were still finishing.)
         let builder = self.builder
-        await withTaskGroup(of: (String, Result<CaseFile, Error>).self) { group in
-            for h in holdings {
-                group.addTask {
-                    do { return (h.symbol, .success(try await builder.buildCase(for: h))) }
-                    catch { return (h.symbol, .failure(error)) }
+        let jobs: [(String, Task<CaseFile, Error>)] = holdings.map { h in
+            (h.symbol, Task.detached(priority: .userInitiated) { try await builder.buildCase(for: h) })
+        }
+        for (symbol, job) in jobs {
+            do {
+                let file = try await job.value
+                cases[symbol] = file
+                failures[symbol] = nil
+                if reports[symbol]?.author != .appleIntelligence || reports[symbol].map({ Date().timeIntervalSince($0.createdAt) > 1800 }) == true {
+                    reports[symbol] = RuleBasedDetective.investigate(file)
                 }
-            }
-            for await (symbol, result) in group {
-                switch result {
-                case .success(let file):
-                    cases[symbol] = file
-                    failures[symbol] = nil
-                    if reports[symbol]?.author != .appleIntelligence || reports[symbol].map({ Date().timeIntervalSince($0.createdAt) > 1800 }) == true {
-                        reports[symbol] = RuleBasedDetective.investigate(file)
-                    }
-                case .failure(let error):
-                    failures[symbol] = error.localizedDescription
-                }
+            } catch {
+                failures[symbol] = error.localizedDescription
             }
         }
         lastRefresh = Date()

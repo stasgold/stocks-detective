@@ -67,14 +67,12 @@ public struct YahooMarketData: MarketDataProvider {
             URL(string: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=\(q)&region=US&lang=en-US"),
             URL(string: "https://news.google.com/rss/search?q=\(q)+stock&hl=en-US&gl=US&ceid=US:en"),
         ].compactMap { $0 }
-        // A task group always waits for every child, even when one fails.
-        let feeds = await withTaskGroup(of: Data?.self) { group in
-            for url in urls {
-                group.addTask { try? await self.get(url) }
-            }
-            var out: [Data] = []
-            for await data in group { if let data { out.append(data) } }
-            return out
+        // Independent tasks, each awaited before returning.
+        let session = self
+        let jobs = urls.map { url in Task { try? await session.get(url) } }
+        var feeds: [Data] = []
+        for job in jobs {
+            if let data = await job.value { feeds.append(data) }
         }
         let articles = feeds.flatMap { RSSParser.parse($0) }
         return articles.sorted { ($0.published ?? .distantPast) > ($1.published ?? .distantPast) }
