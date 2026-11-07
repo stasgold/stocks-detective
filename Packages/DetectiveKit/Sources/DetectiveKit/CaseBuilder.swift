@@ -41,21 +41,30 @@ public actor CaseBuilder {
         return ranked
     }
 
+    /// Fetches headlines off the actor so XML parsing doesn't block other cases.
+    nonisolated func companyNews(_ symbol: String) async -> [NewsArticle] {
+        (try? await provider.news(for: symbol)) ?? []
+    }
+
     public func buildCase(for holding: HoldingInput) async throws -> CaseFile {
         let symbol = holding.symbol.uppercased()
-        async let stockTask = series(symbol)
-        async let benchTask = series(holding.sector.etf)
-        async let marketTask = series("SPY")
-        async let newsTask = (try? await provider.news(for: symbol)) ?? []
-        async let marketNewsTask = marketNews()
+        // The stock itself is the only request that may fail. Fetch it first, before anything
+        // else is started, so an error never leaves other requests running in the background.
+        // (Build 4 crashed when a failed price request exited while news was still loading.)
+        let (stock, name) = try await series(symbol)
 
-        let (stock, name) = try await stockTask
-        let bench = (try? await benchTask)?.0 ?? stock
-        let market = (try? await marketTask)?.0 ?? bench
+        // Everything else is optional and can't throw. Holdings are already investigated in
+        // parallel by the caller, so plain sequential awaits here are fast enough, and the
+        // benchmark/market series are usually served from cache.
+        let bench = (try? await series(holding.sector.etf))?.0 ?? stock
+        let market = (try? await series("SPY"))?.0 ?? bench
+        let rawNews = await companyNews(symbol)
+        let marketNews = await marketNews()
+
         let facts = MovementAnalyzer.analyze(stock: stock, benchmark: bench, market: market)
-        let news = NewsScorer.rank(await newsTask, symbol: symbol, companyName: name)
+        let news = NewsScorer.rank(rawNews, symbol: symbol, companyName: name)
         return CaseFile(symbol: symbol, companyName: name, sector: holding.sector, facts: facts,
-                        news: news, marketNews: await marketNewsTask, series: stock)
+                        news: news, marketNews: marketNews, series: stock)
     }
 }
 

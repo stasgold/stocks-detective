@@ -34,8 +34,9 @@ final class ImportFlowUITests: XCTestCase {
         sleep(20)
         XCTAssertEqual(app.state, .runningForeground, "App crashed after tapping Import")
         snapshot(app, "after-import")
-        XCTAssertTrue(app.staticTexts["NVDA"].waitForExistence(timeout: 20), "Imported holdings not shown")
-        app.staticTexts["NVDA"].firstMatch.tap()
+        let nvda = app.buttons.matching(NSPredicate(format: "label CONTAINS 'NVDA'")).firstMatch
+        XCTAssertTrue(nvda.waitForExistence(timeout: 20), "Imported holdings not shown")
+        nvda.tap()
         sleep(8)
         XCTAssertEqual(app.state, .runningForeground, "App crashed opening a case")
         snapshot(app, "case")

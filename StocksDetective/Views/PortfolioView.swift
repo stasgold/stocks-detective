@@ -5,7 +5,8 @@ import DetectiveKit
 struct PortfolioView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.modelContext) private var context
-    @Query(sort: \Holding.addedAt) private var holdings: [Holding]
+    @Query(sort: \Holding.addedAt) private var allHoldings: [Holding]
+    private var holdings: [Holding] { allHoldings.filter { !$0.isDeleted } }
     @State private var showingAdd = false
     @State private var showingImport = LaunchOptions.openTab == "import"
     @State private var path: [String] = LaunchOptions.openCase.map { [$0] } ?? []

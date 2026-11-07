@@ -17,7 +17,8 @@ public final class RSSParser: NSObject, XMLParserDelegate {
         return delegate.items
     }
 
-    static let dateFormatter: DateFormatter = {
+    // One formatter per parser: news feeds are parsed on several threads at once.
+    private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "EEE, dd MMM yyyy HH:mm:ss Z"
@@ -55,7 +56,7 @@ public final class RSSParser: NSObject, XMLParserDelegate {
                     summary: Self.stripHTML(c["description"] ?? ""),
                     source: source,
                     link: c["link"] ?? "",
-                    published: c["pubDate"].flatMap { Self.dateFormatter.date(from: $0) }))
+                    published: c["pubDate"].flatMap { dateFormatter.date(from: $0) }))
             }
             current = nil
         } else if current != nil {

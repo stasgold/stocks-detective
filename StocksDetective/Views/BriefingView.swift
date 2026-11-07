@@ -5,7 +5,8 @@ import DetectiveKit
 /// The daily "morning meeting" with your analyst: one story for the whole portfolio.
 struct BriefingView: View {
     @Environment(AppModel.self) private var model
-    @Query(sort: \Holding.addedAt) private var holdings: [Holding]
+    @Query(sort: \Holding.addedAt) private var allHoldings: [Holding]
+    private var holdings: [Holding] { allHoldings.filter { !$0.isDeleted } }
 
     private var inputs: [HoldingInput] { holdings.map(\.input) }
 
