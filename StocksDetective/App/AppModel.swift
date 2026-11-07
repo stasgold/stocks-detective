@@ -25,7 +25,7 @@ final class AppModel {
     private(set) var provider: any MarketDataProvider
     private var builder: CaseBuilder
 
-    static let demoKey = "demoMode"
+    nonisolated static let demoKey = "demoMode"
 
     init() {
         let demo = UserDefaults.standard.bool(forKey: Self.demoKey)

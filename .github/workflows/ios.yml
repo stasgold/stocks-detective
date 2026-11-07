@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:6.1-noble
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run tests
         working-directory: Packages/DetectiveKit
         run: swift test
@@ -24,7 +24,7 @@ jobs:
     name: Build iOS app (Xcode 26)
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Select Xcode 26
         run: |
@@ -70,7 +70,7 @@ jobs:
           (cd build/sim/Build/Products/Debug-iphonesimulator && zip -qry "$GITHUB_WORKSPACE/out/StocksDetective-simulator.zip" StocksDetective.app)
           ls -la out
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: StocksDetective
           path: out/*
