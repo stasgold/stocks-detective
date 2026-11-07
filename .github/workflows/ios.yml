@@ -1,0 +1,76 @@
+name: Build iOS app
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-tests:
+    name: DetectiveKit tests (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        working-directory: Packages/DetectiveKit
+        run: swift test
+
+  ios-build:
+    name: Build iOS app (Xcode 26)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+          xcrun simctl list runtimes | grep iOS || true
+
+      - name: Install tools
+        run: brew install xcodegen xcbeautify
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for Simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project StocksDetective.xcodeproj \
+            -scheme StocksDetective \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/sim \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
+
+      - name: Build for device (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project StocksDetective.xcodeproj \
+            -scheme StocksDetective \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | xcbeautify --renderer github-actions
+
+      - name: Package artifacts
+        run: |
+          mkdir -p out Payload
+          cp -R build/device/Build/Products/Release-iphoneos/StocksDetective.app Payload/
+          zip -qry out/StocksDetective-unsigned.ipa Payload
+          (cd build/sim/Build/Products/Debug-iphonesimulator && zip -qry "$GITHUB_WORKSPACE/out/StocksDetective-simulator.zip" StocksDetective.app)
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StocksDetective
+          path: out/*
