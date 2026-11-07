@@ -47,7 +47,7 @@ enum ModelRouter {
     }
 
     static var cloudState: CloudState {
-        #if compiler(>=6.3)
+        #if PCC_SDK
         if #available(iOS 27.0, *) {
             let model = PrivateCloudComputeLanguageModel()
             guard model.isAvailable else { return .unavailable }
@@ -69,7 +69,7 @@ enum ModelRouter {
 
     /// Offers the system sheet for raising the daily cloud limit (iCloud+), when there is one.
     static func showLimitIncrease() {
-        #if compiler(>=6.3)
+        #if PCC_SDK
         if #available(iOS 27.0, *) {
             if let suggestion = PrivateCloudComputeLanguageModel().quotaUsage.limitIncreaseSuggestion {
                 suggestion.show()
@@ -88,7 +88,7 @@ enum ModelRouter {
     }
 
     static func cloudSession(instructions: String, tools: [any Tool]) -> LanguageModelSession? {
-        #if compiler(>=6.3)
+        #if PCC_SDK
         if #available(iOS 27.0, *), cloudUsable {
             return LanguageModelSession(model: PrivateCloudComputeLanguageModel(), tools: tools, instructions: instructions)
         }

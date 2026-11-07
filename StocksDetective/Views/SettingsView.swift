@@ -13,6 +13,16 @@ struct SettingsView: View {
         @Bindable var model = model
         NavigationStack {
             Form {
+                if ModelRouter.cloudState == .notInThisBuild {
+                    Section("Apple Intelligence") {
+                        switch model.ai.status {
+                        case .available:
+                            Label("Runs entirely on this iPhone. Works offline.", systemImage: "iphone")
+                        case .unavailable(let reason):
+                            Label(reason, systemImage: "exclamationmark.triangle").foregroundStyle(.secondary)
+                        }
+                    }
+                } else {
                 Section {
                     Picker("Model", selection: $engine) {
                         ForEach(AIEngine.allCases) { Text($0.label).tag($0) }
@@ -37,6 +47,7 @@ struct SettingsView: View {
                     Text(engine == .onDevice
                          ? "On-device: private, offline, fast; reads the top 5 headlines per stock."
                          : "Private Cloud: Apple's larger model on Private Cloud Compute. Reads up to 10 headlines per stock and your whole portfolio for the briefing. Needs internet; your data isn't stored or visible to Apple. Has a daily limit tied to your iCloud account. Falls back to on-device automatically.")
+                }
                 }
 
                 Section {
