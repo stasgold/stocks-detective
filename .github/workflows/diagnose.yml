@@ -80,11 +80,13 @@ jobs:
           for k in ("asi", "lastExceptionBacktrace"):
               if k in body: print(k, json.dumps(body[k])[:1500])
           images = body.get("usedImages", [])
-          for t in body.get("threads", []):
-              if t.get("triggered"):
-                  print("Crashed thread:", t.get("queue", ""))
-                  for fr in t.get("frames", [])[:25]:
-                      img = images[fr["imageIndex"]]["name"] if fr.get("imageIndex", -1) < len(images) else "?"
-                      print("  ", img, fr.get("symbol", hex(fr.get("imageOffset", 0))), fr.get("sourceFile", ""), fr.get("sourceLine", ""))
+          for i, t in enumerate(body.get("threads", [])):
+              frames = t.get("frames", [])
+              names = [images[fr["imageIndex"]]["name"] if fr.get("imageIndex", -1) < len(images) else "?" for fr in frames]
+              if not t.get("triggered") and not any(n in ("StocksDetective", "DetectiveKit", "FoundationModels") or "Concurrency" in n for n in names):
+                  continue
+              print(f"Thread {i}{' CRASHED' if t.get('triggered') else ''}:", t.get("queue", ""))
+              for fr, img in list(zip(frames, names))[:40]:
+                  print("  ", img, fr.get("symbol", hex(fr.get("imageOffset", 0))), fr.get("sourceFile", ""), fr.get("sourceLine", ""))
           PY
           done
