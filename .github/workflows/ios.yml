@@ -26,13 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode 26
-        run: |
-          XCODE=$(ls -d /Applications/Xcode_26*.app | sort | tail -1)
-          echo "Using $XCODE"
-          sudo xcode-select -s "$XCODE/Contents/Developer"
-          xcodebuild -version
-          xcrun simctl list runtimes | grep iOS || true
+      - name: Select newest Xcode
+        run: bash scripts/select_xcode.sh
 
       - name: Install tools
         run: brew install xcodegen xcbeautify

@@ -19,9 +19,9 @@ jobs:
     container: ${{ matrix.os == 'ubuntu-latest' && 'swift:6.1-noble' || null }}
     steps:
       - uses: actions/checkout@v5
-      - name: Select Xcode 26
+      - name: Select newest Xcode
         if: runner.os == 'macOS'
-        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort | tail -1)/Contents/Developer"
+        run: bash scripts/select_xcode.sh
       - name: Call live endpoints
         working-directory: Packages/DetectiveKit
         env:
@@ -60,8 +60,8 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
-      - name: Select Xcode 26
-        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort | tail -1)/Contents/Developer"
+      - name: Select newest Xcode
+        run: bash scripts/select_xcode.sh
       - run: brew install xcodegen xcbeautify
       - run: xcodegen generate
       - name: Pick simulator

@@ -29,11 +29,8 @@ jobs:
             exit 1
           fi
 
-      - name: Select Xcode 26
-        run: |
-          XCODE=$(ls -d /Applications/Xcode_26*.app | sort | tail -1)
-          sudo xcode-select -s "$XCODE/Contents/Developer"
-          xcodebuild -version
+      - name: Select newest Xcode
+        run: bash scripts/select_xcode.sh
 
       - name: Install tools
         run: brew install xcodegen xcbeautify
