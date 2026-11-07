@@ -7,12 +7,13 @@ struct PortfolioView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Holding.addedAt) private var holdings: [Holding]
     @State private var showingAdd = false
-    @State private var showingImport = false
+    @State private var showingImport = LaunchOptions.openTab == "import"
+    @State private var path: [String] = LaunchOptions.openCase.map { [$0] } ?? []
 
     private var inputs: [HoldingInput] { holdings.map(\.input) }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Group {
                 if holdings.isEmpty {
                     emptyState
