@@ -60,11 +60,12 @@ public actor CaseBuilder {
         let market = (try? await series("SPY"))?.0 ?? bench
         let rawNews = await companyNews(symbol)
         let marketNews = await marketNews()
+        let intraday = try? await provider.chart(for: symbol, range: .day)
 
         let facts = MovementAnalyzer.analyze(stock: stock, benchmark: bench, market: market)
         let news = NewsScorer.rank(rawNews, symbol: symbol, companyName: name, limit: 10)
         return CaseFile(symbol: symbol, companyName: name, sector: holding.sector, facts: facts,
-                        news: news, marketNews: marketNews, series: stock)
+                        news: news, marketNews: marketNews, series: stock, intraday: intraday)
     }
 }
 

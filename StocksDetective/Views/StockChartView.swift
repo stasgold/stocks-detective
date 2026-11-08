@@ -113,7 +113,7 @@ struct StockChartView: View {
             }
         }
         .chartYScale(domain: domain)
-        .chartXScale(domain: 0...max(data.bars.count - 1, 1))
+        .chartXScale(domain: 0...max(data.xSlots - 1, 1))
         .chartYAxis {
             AxisMarks(position: .trailing, values: .automatic(desiredCount: 5)) { _ in
                 AxisGridLine().foregroundStyle(.secondary.opacity(0.25))
@@ -140,7 +140,7 @@ struct StockChartView: View {
             BarMark(x: .value("i", i), y: .value("Volume", bar.volume))
                 .foregroundStyle(i == selectedIndex ? Color.primary.opacity(0.8) : Color.gray.opacity(0.55))
         }
-        .chartXScale(domain: 0...max(data.bars.count - 1, 1))
+        .chartXScale(domain: 0...max(data.xSlots - 1, 1))
         .chartXAxis(.hidden)
         .chartYAxis(.hidden)
         .accessibilityHidden(true)

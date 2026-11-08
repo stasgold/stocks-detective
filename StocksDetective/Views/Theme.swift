@@ -94,6 +94,38 @@ struct Sparkline: View {
     }
 }
 
+/// Row sparkline for the last trading day: intraday prices, colored by the day's change,
+/// with the previous close dashed (matches the % pill next to it).
+struct DaySparkline: View {
+    let file: CaseFile
+
+    var body: some View {
+        if let c = file.intraday, c.bars.count > 1 {
+            let color = Theme.change(file.facts.dayChange)
+            Chart {
+                if let base = c.previousClose {
+                    RuleMark(y: .value("Previous close", base))
+                        .foregroundStyle(.secondary.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 0.8, dash: [2, 2]))
+                }
+                ForEach(Array(c.bars.enumerated()), id: \.offset) { i, bar in
+                    LineMark(x: .value("Time", i), y: .value("Price", bar.close))
+                        .foregroundStyle(color)
+                        .lineStyle(StrokeStyle(lineWidth: 1.4))
+                }
+            }
+            .chartXAxis(.hidden)
+            .chartYAxis(.hidden)
+            .chartXScale(domain: 0...max(c.xSlots - 1, 1))
+            .chartYScale(domain: c.priceDomain)
+            .accessibilityLabel("Today's price, \(file.facts.dayChange.signedPercent)")
+        } else {
+            // No intraday data: last two closes, so the slope still matches today's move.
+            Sparkline(points: Array(file.series.points.suffix(2)))
+        }
+    }
+}
+
 struct Card<Content: View>: View {
     let title: String
     let systemImage: String

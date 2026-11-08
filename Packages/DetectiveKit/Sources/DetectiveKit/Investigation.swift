@@ -80,9 +80,11 @@ public struct CaseFile: Codable, Hashable, Sendable {
     public let news: [ScoredArticle]
     public let marketNews: [ScoredArticle]
     public let series: PriceSeries
+    /// Last trading day's intraday prices (for the row sparkline), if available.
+    public let intraday: ChartData?
 
     public init(symbol: String, companyName: String?, sector: Sector, facts: MovementFacts,
-                news: [ScoredArticle], marketNews: [ScoredArticle], series: PriceSeries) {
+                news: [ScoredArticle], marketNews: [ScoredArticle], series: PriceSeries, intraday: ChartData? = nil) {
         self.symbol = symbol
         self.companyName = companyName
         self.sector = sector
@@ -90,6 +92,7 @@ public struct CaseFile: Codable, Hashable, Sendable {
         self.news = news
         self.marketNews = marketNews
         self.series = series
+        self.intraday = intraday
     }
 
     public var newsSentiment: Double {

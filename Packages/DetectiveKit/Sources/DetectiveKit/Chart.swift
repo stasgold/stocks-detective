@@ -98,6 +98,16 @@ public struct ChartData: Codable, Hashable, Sendable {
         return change / base * 100
     }
 
+    /// X-axis length in bars. 1D reserves room for a full US session (6.5 h of 5-minute bars),
+    /// so a chart drawn mid-day fills from the left like Yahoo's.
+    public var xSlots: Int {
+        if range == .day, let first = bars.first?.date, let last = bars.last?.date,
+           last.timeIntervalSince(first) < 6.5 * 3600 {
+            return max(bars.count, 79)
+        }
+        return bars.count
+    }
+
     public var priceDomain: ClosedRange<Double> {
         var lo = bars.map { $0.low ?? $0.close }.min() ?? 0
         var hi = bars.map { $0.high ?? $0.close }.max() ?? 1

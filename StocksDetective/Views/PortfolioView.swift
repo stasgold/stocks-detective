@@ -167,7 +167,7 @@ struct HoldingRow: View {
                 }
                 Spacer()
                 if let file {
-                    Sparkline(points: Array(file.series.points.suffix(30)))
+                    DaySparkline(file: file)
                         .frame(width: 60, height: 28)
                     ChangePill(value: file.facts.dayChange)
                 } else if failure == nil {

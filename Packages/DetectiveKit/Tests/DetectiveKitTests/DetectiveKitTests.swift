@@ -180,3 +180,16 @@ final class ReportValidatorTests: XCTestCase {
         XCTAssertTrue(ReportValidator.contradicts("ASML rallies on chip demand", facts: facts(day: -3)))
     }
 }
+
+final class RowSparklineTests: XCTestCase {
+    /// The row's mini chart and its % pill must describe the same thing: the last trading day.
+    func testIntradayMatchesDayChange() async throws {
+        let builder = CaseBuilder(provider: DemoMarketData())
+        for symbol in ["AAPL", "NVDA", "JPM"] {
+            let file = try await builder.buildCase(for: HoldingInput(symbol: symbol, sector: .guess(for: symbol), shares: 1))
+            let day = try XCTUnwrap(file.intraday)
+            XCTAssertEqual(day.range, .day)
+            XCTAssertEqual(try XCTUnwrap(day.changePercent), file.facts.dayChange, accuracy: 0.01, symbol)
+        }
+    }
+}
