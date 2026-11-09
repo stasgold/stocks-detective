@@ -39,6 +39,27 @@ public struct MovementFacts: Codable, Hashable, Sendable {
     public let distanceFrom52wHigh: Double // % below the high in the data window (<= 0)
     public let character: MoveCharacter
 
+    public init(symbol: String, benchmark: String, dayChange: Double, weekChange: Double, monthChange: Double,
+                benchmarkDayChange: Double, marketDayChange: Double, beta: Double, expectedMove: Double,
+                excessMove: Double, typicalDailyMove: Double, zScore: Double, volumeRatio: Double,
+                distanceFrom52wHigh: Double, character: MoveCharacter) {
+        self.symbol = symbol
+        self.benchmark = benchmark
+        self.dayChange = dayChange
+        self.weekChange = weekChange
+        self.monthChange = monthChange
+        self.benchmarkDayChange = benchmarkDayChange
+        self.marketDayChange = marketDayChange
+        self.beta = beta
+        self.expectedMove = expectedMove
+        self.excessMove = excessMove
+        self.typicalDailyMove = typicalDailyMove
+        self.zScore = zScore
+        self.volumeRatio = volumeRatio
+        self.distanceFrom52wHigh = distanceFrom52wHigh
+        self.character = character
+    }
+
     /// Share of the move explained by the benchmark, 0...1.
     public var explainedByMarket: Double {
         guard abs(dayChange) > 0.0001 else { return 1 }
