@@ -1,4 +1,5 @@
 import XCTest
+import SwiftData
 import DetectiveKit
 @testable import StocksDetective
 
