@@ -37,11 +37,6 @@ struct RootView: View {
 
     private func seedIfRequested() {
         guard LaunchOptions.seedDemo else { return }
-        let count = (try? context.fetchCount(FetchDescriptor<Holding>())) ?? 0
-        guard count == 0 else { return }
-        model.demoMode = true
-        for (s, n, sh, cb) in DemoPortfolio.holdings {
-            context.insert(Holding(symbol: s, name: n, shares: sh, costBasis: cb, sector: .guess(for: s)))
-        }
+        HoldingsEditor.seedDemo(in: context, model: model)
     }
 }

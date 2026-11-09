@@ -72,7 +72,7 @@ jobs:
         run: |
           set -o pipefail
           xcodebuild test -project StocksDetective.xcodeproj -scheme StocksDetective -configuration Release \
-            -destination "id=$UDID" -resultBundlePath out/UITests.xcresult \
+            -destination "id=$UDID" -only-testing:StocksDetectiveUITests -resultBundlePath out/UITests.xcresult \
             CODE_SIGNING_ALLOWED=NO ENABLE_TESTABILITY=YES | xcbeautify
       - name: Crash summary
         if: always()

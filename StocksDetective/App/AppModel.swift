@@ -32,16 +32,20 @@ final class AppModel {
 
     nonisolated static let demoKey = "demoMode"
 
-    init() {
+    /// Builds the data provider for the current mode. Tests can swap this out.
+    private let makeProvider: (Bool) -> any MarketDataProvider
+
+    init(makeProvider: @escaping (Bool) -> any MarketDataProvider = { $0 ? DemoMarketData() : YahooMarketData() }) {
         let demo = UserDefaults.standard.bool(forKey: Self.demoKey)
         demoMode = demo
-        let p: any MarketDataProvider = demo ? DemoMarketData() : YahooMarketData()
+        self.makeProvider = makeProvider
+        let p = makeProvider(demo)
         provider = p
         builder = CaseBuilder(provider: p)
     }
 
     private func rebuildProvider() {
-        provider = demoMode ? DemoMarketData() : YahooMarketData()
+        provider = makeProvider(demoMode)
         builder = CaseBuilder(provider: provider)
         clearCaches()
     }

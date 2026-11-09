@@ -46,6 +46,18 @@ jobs:
             -derivedDataPath build/sim \
             CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
 
+      - name: App unit tests (Simulator)
+        run: |
+          set -o pipefail
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild test \
+            -project StocksDetective.xcodeproj \
+            -scheme StocksDetective \
+            -destination "id=$UDID" \
+            -only-testing:StocksDetectiveTests \
+            -derivedDataPath build/test \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
+
       - name: Build for device (unsigned)
         run: |
           set -o pipefail

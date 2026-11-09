@@ -87,28 +87,7 @@ struct ImportPortfolioView: View {
     }
 
     private func importRows() {
-        let rows = result.rows
-        let keep = Set(rows.map(\.symbol))
-        // Read everything we need from existing holdings before deleting any of them:
-        // touching a deleted SwiftData object crashes.
-        let bySymbol = Dictionary(existing.map { ($0.symbol, $0) }, uniquingKeysWith: { a, _ in a })
-
-        for row in rows {
-            if let h = bySymbol[row.symbol] {
-                h.shares = row.shares
-            } else {
-                // Name is filled in from market data on the first refresh.
-                context.insert(Holding(symbol: row.symbol, name: row.symbol, shares: row.shares, costBasis: nil, sector: .guess(for: row.symbol)))
-            }
-        }
-        if replaceExisting {
-            for (symbol, h) in bySymbol where !keep.contains(symbol) {
-                model.remove(symbol)
-                context.delete(h)
-            }
-        }
-        try? context.save()
-        if model.demoMode { model.demoMode = false } // real holdings need live data
+        HoldingsEditor.importRows(result.rows, replace: replaceExisting, existing: existing, in: context, model: model)
         dismiss()
     }
 }

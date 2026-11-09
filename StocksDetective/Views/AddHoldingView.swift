@@ -86,19 +86,12 @@ struct AddHoldingView: View {
         sector = .guess(for: match.symbol)
     }
 
-    private func parsed(_ s: String) -> Double? {
-        Double(s.replacingOccurrences(of: ",", with: ".")).flatMap { $0 > 0 ? $0 : nil }
-    }
+    private func parsed(_ s: String) -> Double? { HoldingsEditor.parseAmount(s) }
 
     private func save() {
         guard let selected, let n = parsed(shares) else { return }
-        if let h = existing.first(where: { $0.symbol == selected.symbol.uppercased() }) {
-            h.shares = n
-            h.costBasis = parsed(cost)
-            h.sector = sector
-        } else {
-            context.insert(Holding(symbol: selected.symbol, name: selected.name, shares: n, costBasis: parsed(cost), sector: sector))
-        }
+        HoldingsEditor.upsert(symbol: selected.symbol, name: selected.name, shares: n, costBasis: parsed(cost),
+                              sector: sector, existing: existing, in: context)
         dismiss()
     }
 }

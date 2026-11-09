@@ -42,7 +42,20 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
     scheme:
       testTargets:
+        - StocksDetectiveTests
         - StocksDetectiveUITests
+  StocksDetectiveTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - StocksDetectiveTests
+    dependencies:
+      - target: StocksDetective
+      - package: DetectiveKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.stocksdetective.app.tests
   StocksDetectiveUITests:
     type: bundle.ui-testing
     platform: iOS

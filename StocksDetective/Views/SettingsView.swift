@@ -90,12 +90,8 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .confirmationDialog("Delete all holdings?", isPresented: $confirmReset, titleVisibility: .visible) {
                 Button("Delete all", role: .destructive) {
-                    // Delete one by one (not a batch delete) so open lists update safely.
-                    for h in (try? context.fetch(FetchDescriptor<Holding>())) ?? [] {
-                        context.delete(h)
-                    }
-                    try? context.save()
-                    model.clearCaches()
+                    // One by one (not a batch delete) so open lists update safely.
+                    HoldingsEditor.deleteAll(in: context, model: model)
                 }
             }
         }

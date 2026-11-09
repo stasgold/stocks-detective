@@ -74,25 +74,14 @@ struct PortfolioView: View {
     }
 
     /// Most surprising moves first: that's where the story is.
-    private var sortedHoldings: [Holding] {
-        holdings.sorted { a, b in
-            abs(model.cases[a.symbol]?.facts.zScore ?? 0) > abs(model.cases[b.symbol]?.facts.zScore ?? 0)
-        }
-    }
+    private var sortedHoldings: [Holding] { HoldingsEditor.sortedBySurprise(holdings, cases: model.cases) }
 
     /// Imported holdings start with just a ticker; use the company name once we have it.
-    private func fillInNames() {
-        for h in holdings where h.name == h.symbol {
-            if let name = model.cases[h.symbol]?.companyName, !name.isEmpty { h.name = name }
-        }
-    }
+    private func fillInNames() { HoldingsEditor.fillInNames(holdings, cases: model.cases) }
 
     private func delete(_ offsets: IndexSet) {
         let list = sortedHoldings
-        for i in offsets {
-            model.remove(list[i].symbol)
-            context.delete(list[i])
-        }
+        HoldingsEditor.delete(offsets.map { list[$0] }, in: context, model: model)
     }
 
     private var emptyState: some View {
@@ -106,10 +95,7 @@ struct PortfolioView: View {
             Button("Import from paste") { showingImport = true }
                 .buttonStyle(.bordered)
             Button("Try the demo portfolio") {
-                model.demoMode = true
-                for (s, n, sh, cb) in DemoPortfolio.holdings {
-                    context.insert(Holding(symbol: s, name: n, shares: sh, costBasis: cb, sector: .guess(for: s)))
-                }
+                HoldingsEditor.seedDemo(in: context, model: model)
             }
         }
     }

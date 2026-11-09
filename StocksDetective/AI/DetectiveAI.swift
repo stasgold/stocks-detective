@@ -148,23 +148,37 @@ final class DetectiveAI {
     }
 
     static func convert(_ r: AIReport, symbol: String, facts: MovementFacts, fallback: InvestigationReport, author: ReportAuthor) -> InvestigationReport {
-        let verdict: Verdict = switch r.verdict {
+        makeReport(symbol: symbol, headline: r.headline, whatHappened: r.whatHappened,
+                   causes: r.causes.map { (title: $0.title, detail: $0.detail, evidence: $0.evidence) },
+                   verdict: verdict(from: r.verdict), verdictReasoning: r.verdictReasoning, watchNext: r.watchNext,
+                   confidence: r.confidence, facts: facts, fallback: fallback, author: author)
+    }
+
+    static func verdict(from v: AIVerdict) -> Verdict {
+        switch v {
         case .justified: .justified
         case .overreaction: .overreaction
         case .underreaction: .underreaction
         case .unexplained: .unexplained
         case .noise: .noise
         }
-        return InvestigationReport(
+    }
+
+    /// Assembles a report from the model's fields, replacing any headline or summary
+    /// that misstates the move with the rule-based version.
+    static func makeReport(symbol: String, headline: String, whatHappened: String,
+                           causes: [(title: String, detail: String, evidence: String)], verdict: Verdict,
+                           verdictReasoning: String, watchNext: [String], confidence: Int,
+                           facts: MovementFacts, fallback: InvestigationReport, author: ReportAuthor) -> InvestigationReport {
+        InvestigationReport(
             symbol: symbol,
-            // Keep the model's writing, but never a headline or summary that misstates the move.
-            headline: ReportValidator.contradicts(r.headline, facts: facts) ? fallback.headline : r.headline,
-            whatHappened: ReportValidator.contradicts(r.whatHappened, facts: facts) ? fallback.whatHappened : r.whatHappened,
-            causes: r.causes.map { Cause(title: $0.title, detail: $0.detail, evidence: $0.evidence.isEmpty ? nil : $0.evidence) },
+            headline: ReportValidator.contradicts(headline, facts: facts) ? fallback.headline : headline,
+            whatHappened: ReportValidator.contradicts(whatHappened, facts: facts) ? fallback.whatHappened : whatHappened,
+            causes: causes.map { Cause(title: $0.title, detail: $0.detail, evidence: $0.evidence.isEmpty ? nil : $0.evidence) },
             verdict: verdict,
-            verdictReasoning: r.verdictReasoning,
-            watchNext: r.watchNext,
-            confidence: r.confidence,
+            verdictReasoning: verdictReasoning,
+            watchNext: watchNext,
+            confidence: confidence,
             author: author
         )
     }

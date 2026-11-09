@@ -22,8 +22,8 @@ enum BackgroundInvestigator {
     }
 
     @MainActor
-    static func loadHoldings() -> [HoldingInput] {
-        let context = ModelContext(SharedStore.container)
+    static func loadHoldings(from container: ModelContainer = SharedStore.container) -> [HoldingInput] {
+        let context = ModelContext(container)
         return ((try? context.fetch(FetchDescriptor<Holding>())) ?? []).map(\.input)
     }
 
@@ -36,17 +36,43 @@ enum BackgroundInvestigator {
         let provider: any MarketDataProvider = defaults.bool(forKey: AppModel.demoKey) ? DemoMarketData() : YahooMarketData()
         let builder = CaseBuilder(provider: provider)
 
+        for file in await casesToAlert(holdings, builder: builder, threshold: threshold, defaults: defaults) {
+            let report = await investigate(file)
+            await notify(report: report, facts: file.facts)
+        }
+    }
+
+    /// Unusual, stock-specific moves (market-wide swings and normal noise are skipped).
+    static func shouldAlert(_ f: MovementFacts, threshold: Double) -> Bool {
+        abs(f.zScore) >= threshold && f.character != .marketDriven && f.character != .noise
+    }
+
+    /// Key that limits alerts to one per symbol per day.
+    static func alertKey(symbol: String, on date: Date = Date()) -> String {
+        "alerted-\(symbol)-\(Calendar.current.startOfDay(for: date).timeIntervalSince1970)"
+    }
+
+    /// Cases worth a notification right now; marks each as alerted for today.
+    static func casesToAlert(_ holdings: [HoldingInput], builder: CaseBuilder, threshold: Double,
+                             defaults: UserDefaults, now: Date = Date()) async -> [CaseFile] {
+        var out: [CaseFile] = []
         for h in holdings {
-            guard let file = try? await builder.buildCase(for: h) else { continue }
-            let f = file.facts
-            guard abs(f.zScore) >= threshold, f.character != .marketDriven, f.character != .noise else { continue }
-            // One alert per symbol per day.
-            let key = "alerted-\(h.symbol)-\(Calendar.current.startOfDay(for: Date()).timeIntervalSince1970)"
+            guard let file = try? await builder.buildCase(for: h), shouldAlert(file.facts, threshold: threshold) else { continue }
+            let key = alertKey(symbol: h.symbol, on: now)
             guard !defaults.bool(forKey: key) else { continue }
             defaults.set(true, forKey: key)
-            let report = await investigate(file)
-            await notify(report: report, facts: f)
+            out.append(file)
         }
+        return out
+    }
+
+    static func notificationContent(report: InvestigationReport, facts: MovementFacts) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = "\(report.symbol) \(String(format: "%+.1f%%", facts.dayChange)) · \(report.verdict.label)"
+        content.body = report.headline + " — tap to open the case."
+        content.sound = .default
+        content.userInfo = ["symbol": report.symbol]
+        return content
     }
 
     @MainActor
@@ -55,11 +81,7 @@ enum BackgroundInvestigator {
     }
 
     static func notify(report: InvestigationReport, facts: MovementFacts) async {
-        let content = UNMutableNotificationContent()
-        content.title = "\(report.symbol) \(String(format: "%+.1f%%", facts.dayChange)) · \(report.verdict.label)"
-        content.body = report.headline + " — tap to open the case."
-        content.sound = .default
-        content.userInfo = ["symbol": report.symbol]
+        let content = notificationContent(report: report, facts: facts)
         let request = UNNotificationRequest(identifier: "case-\(report.symbol)", content: content, trigger: nil)
         try? await UNUserNotificationCenter.current().add(request)
     }

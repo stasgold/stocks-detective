@@ -17,9 +17,13 @@ struct PriceHistoryTool: Tool {
     }
 
     func call(arguments: Arguments) async throws -> String {
-        let r = try await provider.priceSeries(for: arguments.symbol.uppercased())
-        let pts = r.series.points.suffix(arguments.days)
-        guard let first = pts.first else { return "No data for \(arguments.symbol)." }
+        try await history(symbol: arguments.symbol, days: arguments.days)
+    }
+
+    func history(symbol: String, days: Int) async throws -> String {
+        let r = try await provider.priceSeries(for: symbol.uppercased())
+        let pts = r.series.points.suffix(max(days, 1))
+        guard let first = pts.first else { return "No data for \(symbol)." }
         let change = (r.series.lastPrice / first.close - 1) * 100
         let closes = pts.suffix(10).map { String(format: "%.2f", $0.close) }.joined(separator: ", ")
         return "\(r.series.symbol): last \(String(format: "%.2f", r.series.lastPrice)), today \(String(format: "%+.2f", r.series.dayChangePercent))%, \(String(format: "%+.2f", change))% over \(pts.count) days. Recent closes: \(closes)"
@@ -39,7 +43,11 @@ struct NewsLookupTool: Tool {
     }
 
     func call(arguments: Arguments) async throws -> String {
-        let s = arguments.symbol.uppercased()
+        try await headlines(symbol: arguments.symbol)
+    }
+
+    func headlines(symbol: String) async throws -> String {
+        let s = symbol.uppercased()
         let ranked = NewsScorer.rank(try await provider.news(for: s), symbol: s, companyName: nil, limit: 5)
         if ranked.isEmpty { return "No recent headlines found for \(s)." }
         return ranked.map { "- \($0.article.title)" }.joined(separator: "\n")
