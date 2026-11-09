@@ -31,7 +31,7 @@ final class ModelRouterTests: XCTestCase {
     }
 
     func testSessionAndRunWithoutAI() async throws {
-        try XCTSkipIf(ModelRouter.onDeviceAvailable, "Simulator has Apple Intelligence")
+        ModelRouter.disabledForTesting = true; defer { ModelRouter.disabledForTesting = false }
         XCTAssertNil(ModelRouter.session(instructions: "x"))
         let result = await ModelRouter.run(instructions: "x") { _, _ in 1 }
         XCTAssertNil(result)
@@ -49,7 +49,7 @@ final class DetectiveAITests: XCTestCase {
     }
 
     func testInvestigateAndBriefFallBackWithoutAI() async throws {
-        try XCTSkipIf(ModelRouter.anyAvailable, "Exercises the no-AI path")
+        ModelRouter.disabledForTesting = true; defer { ModelRouter.disabledForTesting = false }
         let file = try await demoCase("NVDA")
         let report = await DetectiveAI().investigate(file)
         XCTAssertEqual(report.author, .ruleBased)
@@ -125,7 +125,7 @@ final class InterrogationTests: XCTestCase {
     }
 
     func testAskWithoutAI() async throws {
-        try XCTSkipIf(ModelRouter.anyAvailable, "Exercises the no-AI path")
+        ModelRouter.disabledForTesting = true; defer { ModelRouter.disabledForTesting = false }
         let file = try await demoCase("AAPL")
         let i = Interrogation(file: file, report: nil, provider: DemoMarketData())
         XCTAssertNil(i.author)
@@ -225,5 +225,41 @@ final class FormattingTests: XCTestCase {
         for k in ["seedDemoPortfolio", "openCase", "openTab"] { d.removeObject(forKey: k) }
         XCTAssertFalse(LaunchOptions.seedDemo); XCTAssertNil(LaunchOptions.openCase)
         XCTAssertEqual(AppTab(rawValue: "settings"), .settings)
+    }
+}
+
+/// Runs the real on-device model when the machine has Apple Intelligence (skipped otherwise).
+@MainActor
+final class LiveAppleIntelligenceTests: XCTestCase {
+    override func setUpWithError() throws {
+        try XCTSkipUnless(ModelRouter.onDeviceAvailable, "Apple Intelligence isn't available here")
+    }
+
+    func testInvestigationByOnDeviceModel() async throws {
+        let file = try await demoCase("NVDA")
+        let report = await DetectiveAI().investigate(file)
+        XCTAssertEqual(report.author, .appleIntelligence)
+        XCTAssertFalse(report.headline.isEmpty)
+        XCTAssertFalse(ReportValidator.contradicts(report.headline, facts: file.facts), "validator guarantees a consistent headline")
+        XCTAssertLessThanOrEqual(report.watchNext.count, 3)
+        print("AI REPORT:", report.verdict.label, "|", report.headline, "|", report.whatHappened)
+    }
+
+    func testBriefingByOnDeviceModel() async throws {
+        let files = [try await demoCase("NVDA"), try await demoCase("AAPL")]
+        let holdings = files.map { HoldingInput(symbol: $0.symbol, sector: .technology, shares: 10) }
+        let b = await DetectiveAI().brief(snapshot: PortfolioSnapshot(cases: files, holdings: holdings), cases: files, reports: [:])
+        XCTAssertEqual(b.author, .appleIntelligence)
+        XCTAssertFalse(b.summary.isEmpty)
+        print("AI BRIEFING:", b.headline)
+    }
+
+    func testInterrogationAnswers() async throws {
+        let i = Interrogation(file: try await demoCase("AAPL"), report: nil, provider: DemoMarketData())
+        XCTAssertEqual(i.author, .appleIntelligence)
+        await i.ask("In one sentence, was today's move about Apple or the whole market?")
+        XCTAssertEqual(i.messages.count, 2)
+        XCTAssertFalse(i.messages[1].text.isEmpty)
+        print("AI ANSWER:", i.messages[1].text)
     }
 }

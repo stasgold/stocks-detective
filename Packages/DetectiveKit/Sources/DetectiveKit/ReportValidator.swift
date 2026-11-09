@@ -3,20 +3,26 @@ import Foundation
 /// Sanity checks for AI-written text. The on-device model occasionally gets the direction or
 /// size of a move wrong ("falls 7.4%" for a stock that rose 5%); we never show that.
 public enum ReportValidator {
-    static let downWords: Set<String> = ["fall", "falls", "fell", "falling", "drop", "drops", "dropped", "plunge", "plunges",
-                                         "sink", "sinks", "slide", "slides", "slump", "slumps", "tumble", "tumbles", "decline",
-                                         "declines", "down", "lower", "slips", "sell-off", "selloff", "loses", "sinking"]
-    static let upWords: Set<String> = ["rise", "rises", "rose", "rising", "jump", "jumps", "surge", "surges", "soar", "soars",
-                                       "rally", "rallies", "climb", "climbs", "gain", "gains", "up", "higher", "pops",
-                                       "rebound", "rebounds", "advances", "spikes"]
+    // Word stems, so every tense counts: slump/slumps/slumped/slumping.
+    static let downStems = ["fall", "fell", "drop", "plung", "sink", "sank", "sunk", "slid", "slump", "tumbl", "declin",
+                            "lower", "slip", "sell-off", "selloff", "lose", "losing", "lost", "crash", "plummet", "retreat", "skid"]
+    static let upStems = ["rise", "rising", "rose", "risen", "jump", "surg", "soar", "rall", "climb", "gain", "higher",
+                          "rebound", "advanc", "spik", "rocket", "leap", "lept"]
+    // Short words matched exactly (so "update" isn't "up" and "downgrade" isn't "down").
+    static let downExact: Set<String> = ["down", "dip", "dips", "dipped"]
+    static let upExact: Set<String> = ["up", "pop", "pops", "popped"]
+
+    static func says(_ tokens: Set<String>, stems: [String], exact: Set<String>) -> Bool {
+        !tokens.isDisjoint(with: exact) || tokens.contains { t in stems.contains { t.hasPrefix($0) } }
+    }
 
     /// True if the text contradicts the facts about today's move.
     public static func contradicts(_ text: String, facts: MovementFacts) -> Bool {
         let tokens = Set(text.lowercased()
             .components(separatedBy: CharacterSet.letters.union(CharacterSet(charactersIn: "-")).inverted)
             .filter { !$0.isEmpty })
-        let saysDown = !tokens.isDisjoint(with: downWords)
-        let saysUp = !tokens.isDisjoint(with: upWords)
+        let saysDown = says(tokens, stems: downStems, exact: downExact)
+        let saysUp = says(tokens, stems: upStems, exact: upExact)
         if facts.dayChange >= 0.5 && saysDown && !saysUp { return true }
         if facts.dayChange <= -0.5 && saysUp && !saysDown { return true }
 

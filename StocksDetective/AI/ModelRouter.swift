@@ -41,7 +41,11 @@ enum ModelRouter {
         AIEngine(rawValue: UserDefaults.standard.string(forKey: engineKey) ?? "") ?? .onDevice
     }
 
+    /// Tests turn Apple Intelligence off to exercise the fallback paths on any machine.
+    static var disabledForTesting = false
+
     static var onDeviceAvailable: Bool {
+        if disabledForTesting { return false }
         if case .available = SystemLanguageModel.default.availability { return true }
         return false
     }
@@ -62,7 +66,7 @@ enum ModelRouter {
         #endif
     }
 
-    static var cloudUsable: Bool { cloudState == .ready || cloudState == .nearLimit }
+    static var cloudUsable: Bool { !disabledForTesting && (cloudState == .ready || cloudState == .nearLimit) }
 
     /// True when any Apple Intelligence model can answer.
     static var anyAvailable: Bool { onDeviceAvailable || (preferred == .privateCloud && cloudUsable) }

@@ -86,6 +86,7 @@ final class DetectiveAI {
     }
 
     var status: Status {
+        if ModelRouter.disabledForTesting { return .unavailable("Apple Intelligence is turned off for testing.") }
         switch SystemLanguageModel.default.availability {
         case .available:
             return .available

@@ -5,7 +5,10 @@ import DetectiveKit
 
 @MainActor
 final class AppModelTests: XCTestCase {
+    // These test data flow, not the model: keep Apple Intelligence out so runs are fast and identical everywhere.
+    override func setUp() { ModelRouter.disabledForTesting = true }
     override func tearDown() {
+        ModelRouter.disabledForTesting = false
         UserDefaults.standard.removeObject(forKey: AppModel.demoKey)
     }
 
@@ -56,7 +59,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testSnapshotInvestigateBriefingClearRemove() async throws {
-        try XCTSkipIf(ModelRouter.anyAvailable, "Exercises the no-AI path")
+        ModelRouter.disabledForTesting = true; defer { ModelRouter.disabledForTesting = false }
         let model = makeModel()
         await model.refresh(demoInputs)
         XCTAssertEqual(model.snapshot(for: demoInputs).lines.count, 5)
@@ -77,7 +80,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testWriteBriefingRefreshesFirstWhenEmpty() async throws {
-        try XCTSkipIf(ModelRouter.anyAvailable, "Exercises the no-AI path")
+        ModelRouter.disabledForTesting = true; defer { ModelRouter.disabledForTesting = false }
         let model = makeModel()
         await model.writeBriefing(demoInputs)
         XCTAssertEqual(model.cases.count, 5)
@@ -104,7 +107,11 @@ final class HoldingTests: XCTestCase {
 
 @MainActor
 final class HoldingsEditorTests: XCTestCase {
-    override func tearDown() { UserDefaults.standard.removeObject(forKey: AppModel.demoKey) }
+    override func setUp() { ModelRouter.disabledForTesting = true }
+    override func tearDown() {
+        ModelRouter.disabledForTesting = false
+        UserDefaults.standard.removeObject(forKey: AppModel.demoKey)
+    }
 
     func fetch(_ c: ModelContainer) -> [Holding] {
         ((try? c.mainContext.fetch(FetchDescriptor<Holding>())) ?? []).sorted { $0.symbol < $1.symbol }

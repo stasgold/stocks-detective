@@ -143,6 +143,14 @@ final class ReportValidatorTests2: XCTestCase {
         XCTAssertTrue(ReportValidator.contradicts("Shares surge", facts: down))
         XCTAssertFalse(ReportValidator.contradicts("Shares slide", facts: down))
         XCTAssertFalse(ReportValidator.contradicts("Shares fall", facts: makeFacts(day: 0.2)), "tiny moves aren't judged on direction")
+        for t in ["Shares slumped", "Stock plummeted", "Shares dipped", "Stock is down", "Shares tumbling", "Stock sank"] {
+            XCTAssertTrue(ReportValidator.contradicts(t, facts: up), t)
+        }
+        for t in ["Shares rallied", "Stock popped", "Stock soaring", "Shares are up", "Stock rocketed"] {
+            XCTAssertTrue(ReportValidator.contradicts(t, facts: down), t)
+        }
+        XCTAssertFalse(ReportValidator.contradicts("Analyst update after upgrade", facts: down), "'update'/'upgrade' aren't 'up'")
+        XCTAssertFalse(ReportValidator.contradicts("Downgrade weighs on shares", facts: up), "'downgrade' isn't 'down'")
     }
 
     func testNumberChecks() {
