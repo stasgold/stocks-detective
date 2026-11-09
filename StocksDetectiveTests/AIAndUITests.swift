@@ -2,6 +2,7 @@ import XCTest
 import SwiftData
 import SwiftUI
 import UserNotifications
+import FoundationModels
 import DetectiveKit
 @testable import StocksDetective
 
@@ -231,8 +232,15 @@ final class FormattingTests: XCTestCase {
 /// Runs the real on-device model when the machine has Apple Intelligence (skipped otherwise).
 @MainActor
 final class LiveAppleIntelligenceTests: XCTestCase {
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         try XCTSkipUnless(ModelRouter.onDeviceAvailable, "Apple Intelligence isn't available here")
+        // Some machines (e.g. CI simulators) report the model as available but can't run it.
+        do {
+            _ = try await LanguageModelSession().respond(to: "Reply with the word OK.")
+        } catch {
+            print("AI PROBE FAILED:", error)
+            throw XCTSkip("The on-device model can't generate here: \(error.localizedDescription)")
+        }
     }
 
     func testInvestigationByOnDeviceModel() async throws {
@@ -260,6 +268,7 @@ final class LiveAppleIntelligenceTests: XCTestCase {
         await i.ask("In one sentence, was today's move about Apple or the whole market?")
         XCTAssertEqual(i.messages.count, 2)
         XCTAssertFalse(i.messages[1].text.isEmpty)
+        XCTAssertFalse(i.messages[1].text.hasPrefix("I couldn't finish"), "got an error instead of an answer")
         print("AI ANSWER:", i.messages[1].text)
     }
 }
