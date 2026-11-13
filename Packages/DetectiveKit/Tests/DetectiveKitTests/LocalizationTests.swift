@@ -6,9 +6,11 @@ final class LocalizationTests: XCTestCase {
                             "pt-BR", "ru", "th", "tr", "uk", "vi", "zh-Hans"]
 
     private func table(_ lang: String) throws -> [String: String] {
-        let path = try XCTUnwrap(Bundle.module.path(forResource: "Localizable", ofType: "strings", inDirectory: nil,
-                                                     forLocalization: lang), "\(lang).lproj missing")
-        let dict = try XCTUnwrap(NSDictionary(contentsOfFile: path) as? [String: String], "\(lang) does not parse")
+        // Read the file by path: Linux Foundation doesn't resolve region localizations like "pt-BR".
+        let base = try XCTUnwrap(Bundle.module.resourceURL, "no resource bundle")
+        let url = base.appendingPathComponent("\(lang).lproj/Localizable.strings")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path), "\(lang).lproj missing")
+        let dict = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String], "\(lang) does not parse")
         return dict
     }
 
