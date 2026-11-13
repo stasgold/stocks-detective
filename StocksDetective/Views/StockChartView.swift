@@ -114,10 +114,19 @@ struct StockChartView: View {
         }
         .chartYScale(domain: domain)
         .chartXScale(domain: 0...max(data.xSlots - 1, 1))
+        // Price labels sit inside the plot (like Yahoo), so the price and volume charts
+        // share the same full width and their bars line up.
         .chartYAxis {
-            AxisMarks(position: .trailing, values: .automatic(desiredCount: 5)) { _ in
+            AxisMarks(preset: .inset, position: .trailing, values: .automatic(desiredCount: 5)) { value in
                 AxisGridLine().foregroundStyle(.secondary.opacity(0.25))
-                AxisValueLabel()
+                AxisValueLabel {
+                    if let v = value.as(Double.self) {
+                        Text(v.formatted(.number.precision(.fractionLength(v < 10 ? 2 : 0))))
+                            .font(.caption2.monospacedDigit())
+                            .padding(.horizontal, 3)
+                            .background(.background.opacity(0.6), in: .rect(cornerRadius: 3))
+                    }
+                }
             }
         }
         .chartXAxis {
