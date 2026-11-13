@@ -104,7 +104,7 @@ New UI strings: build once in Xcode (the catalog picks them up), add the key to 
 ## App Store submission
 
 - `fastlane/metadata/<locale>/`: name, subtitle, keywords, description, promotional text and release notes for 25 storefront locales, plus categories and App Review notes. Edit `tools/appstore/metadata-*.json` and run `python3 tools/appstore/build_metadata.py` (checks App Store length limits). Upload with `fastlane deliver` or paste into App Store Connect.
-- Fill in `privacy_url.txt` and `support_url.txt` (required) before submitting.
+- Privacy policy: [PRIVACY.md](PRIVACY.md). Support: GitHub Issues. Both URLs and the copyright line are set in `build_metadata.py`.
 - Screenshots: `tools/appstore/screenshots.sh <6.9" simulator UDID>` captures 3 screens per language into `fastlane/screenshots/` (not committed).
 - `StocksDetective/Resources/PrivacyInfo.xcprivacy`: privacy manifest (no tracking, no data collected, UserDefaults reason CA92.1). In App Store Connect › App Privacy, answer "Data Not Collected".
 

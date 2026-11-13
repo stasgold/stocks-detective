@@ -14,8 +14,10 @@ LIMITS = {"name": 30, "subtitle": 30, "promotional_text": 170, "keywords": 100,
           "description": 4000, "release_notes": 4000}
 # Same text for a second storefront locale of the same language.
 ALIASES = {"es-MX": "es-ES", "fr-CA": "fr-FR", "en-GB": "en-US", "en-AU": "en-US", "en-CA": "en-US", "pt-PT": None}
-# Fill these in before submitting (App Store Connect requires a privacy policy and support URL).
-URLS = {"privacy_url": "", "support_url": "", "marketing_url": ""}
+REPO = "https://github.com/stasgold/stocks-detective"
+# blob/HEAD follows the default branch, so the link survives a branch rename.
+URLS = {"privacy_url": f"{REPO}/blob/HEAD/PRIVACY.md", "support_url": f"{REPO}/issues", "marketing_url": ""}
+COPYRIGHT = "2026 Stas Goldberg"
 
 
 def main():
@@ -54,6 +56,8 @@ def main():
         for key, value in URLS.items():
             with open(os.path.join(d, f"{key}.txt"), "w") as f:
                 f.write(value + "\n" if value else "")
+    with open(os.path.join(OUT, "copyright.txt"), "w") as f:
+        f.write(COPYRIGHT + "\n")
     print(f"OK: {len(data)} App Store locales written to fastlane/metadata")
 
 
