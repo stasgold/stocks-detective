@@ -68,7 +68,7 @@ struct PortfolioBriefing: Hashable {
 /// whenever Apple Intelligence isn't available, so the app always explains moves.
 @MainActor
 final class DetectiveAI {
-    static let instructions = """
+    static var instructions: String { """
     You are Stocks Detective, a sharp, calm financial analyst investigating why a stock moved.
     Rules:
     - Use ONLY the numbers and headlines in the brief. Never invent news, numbers or events.
@@ -78,7 +78,17 @@ final class DetectiveAI {
     - 'overreaction' means the move is larger than the evidence supports; 'underreaction' means smaller.
     - Write for a smart non-expert. Be concrete and brief.
     - Do not tell the user to buy or sell.
-    """
+    \(responseLanguageRule)
+    """ }
+
+    /// Write in the user's language when the on-device model supports it; otherwise English.
+    static var responseLanguageRule: String {
+        let locale = Locale.current
+        guard let code = locale.language.languageCode?.identifier, code != "en",
+              SystemLanguageModel.default.supportsLocale(locale) else { return "- Write in English." }
+        let name = Locale(identifier: "en").localizedString(forIdentifier: locale.language.minimalIdentifier) ?? code
+        return "- Write every text field in \(name). Keep tickers, numbers and quoted headlines exactly as given."
+    }
 
     enum Status: Equatable {
         case available
@@ -86,20 +96,20 @@ final class DetectiveAI {
     }
 
     var status: Status {
-        if ModelRouter.disabledForTesting { return .unavailable("Apple Intelligence is turned off for testing.") }
+        if ModelRouter.disabledForTesting { return .unavailable(String(localized: "Apple Intelligence is turned off for testing.")) }
         switch SystemLanguageModel.default.availability {
         case .available:
             return .available
         case .unavailable(let reason):
             switch reason {
             case .deviceNotEligible:
-                return .unavailable("This device doesn't support Apple Intelligence. Using the built-in rule-based analyst.")
+                return .unavailable(String(localized: "This device doesn't support Apple Intelligence. Using the built-in rule-based analyst."))
             case .appleIntelligenceNotEnabled:
-                return .unavailable("Turn on Apple Intelligence in Settings to get AI investigations.")
+                return .unavailable(String(localized: "Turn on Apple Intelligence in Settings to get AI investigations."))
             case .modelNotReady:
-                return .unavailable("Apple Intelligence is still downloading. Using the rule-based analyst for now.")
+                return .unavailable(String(localized: "Apple Intelligence is still downloading. Using the rule-based analyst for now."))
             @unknown default:
-                return .unavailable("Apple Intelligence is unavailable right now.")
+                return .unavailable(String(localized: "Apple Intelligence is unavailable right now."))
             }
         }
     }
@@ -185,17 +195,36 @@ final class DetectiveAI {
     }
 
     static func ruleBasedBriefing(snapshot: PortfolioSnapshot, reports: [String: InvestigationReport]) -> PortfolioBriefing {
-        let pct = String(format: "%+.2f%%", snapshot.dayChangePercent)
+        let pct = NumberText.percent(snapshot.dayChangePercent, digits: 2, signed: true)
         let top = snapshot.topContributors.prefix(3)
         let names = top.map(\.symbol).joined(separator: ", ")
         let marketDriven = snapshot.lines.filter { $0.character == .marketDriven || $0.character == .noise }.count
-        let story = marketDriven * 2 >= snapshot.lines.count ? "mostly a market story" : "driven by company-specific news"
+        let pnl = NumberText.number(snapshot.dayPnL, digits: 0, signed: true)
+        let story = marketDriven * 2 >= snapshot.lines.count
+            ? String(localized: "Today was mostly a market story.")
+            : String(localized: "Today was driven by company-specific news.")
+        let suspects = snapshot.suspects.count
         return PortfolioBriefing(
-            headline: "Portfolio \(pct) today, led by \(names.isEmpty ? "no single holding" : names)",
-            summary: "Your portfolio moved \(pct) (\(String(format: "%+.0f", snapshot.dayPnL)) USD). Today was \(story). \(snapshot.suspects.count) holding(s) moved more than usual on their own and are worth a closer look.",
+            headline: names.isEmpty
+                ? String(localized: "Portfolio \(pct) today, led by no single holding")
+                : String(localized: "Portfolio \(pct) today, led by \(names)"),
+            summary: String(localized: "Your portfolio moved \(pct) (\(pnl) USD).") + " " + story + " "
+                + String(localized: "\(suspects) holdings moved more than usual on their own and are worth a closer look."),
             keyFindings: top.compactMap { reports[$0.symbol]?.headline },
-            watchNext: Array(top.compactMap { reports[$0.symbol]?.watchNext.first }.prefix(3)),
+            watchNext: uniqueWatchItems(top.compactMap { reports[$0.symbol]?.watchNext }),
             author: .ruleBased
         )
+    }
+
+    /// Up to 3 distinct "watch next" items, taking each holding's first item before anyone's second.
+    static func uniqueWatchItems(_ lists: [[String]], limit: Int = 3) -> [String] {
+        var out: [String] = []
+        for i in 0..<(lists.map(\.count).max() ?? 0) {
+            for list in lists where i < list.count && !out.contains(list[i]) {
+                out.append(list[i])
+                if out.count == limit { return out }
+            }
+        }
+        return out
     }
 }

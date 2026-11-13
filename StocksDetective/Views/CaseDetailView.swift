@@ -79,7 +79,7 @@ struct CaseDetailView: View {
         }
     }
 
-    private func stat(_ label: String, _ v: Double) -> some View {
+    private func stat(_ label: LocalizedStringKey, _ v: Double) -> some View {
         VStack(alignment: .leading) {
             Text(label).font(.caption).foregroundStyle(.secondary)
             Text(v.signedPercent).font(.subheadline.monospacedDigit().weight(.semibold)).foregroundStyle(Theme.change(v))
@@ -172,7 +172,7 @@ struct EvidenceRow: View {
                 HStack(spacing: 6) {
                     if !item.article.source.isEmpty { Text(item.article.source) }
                     if let d = item.article.published { Text(d, format: .relative(presentation: .named)) }
-                    ForEach(item.catalysts.prefix(2), id: \.self) { t in
+                    ForEach(item.localizedCatalysts.prefix(2), id: \.self) { t in
                         Text(t).padding(.horizontal, 5).background(.quaternary, in: .capsule)
                     }
                 }
@@ -217,18 +217,18 @@ struct MoveBreakdownCard: View {
                     metric("S&P 500 today", facts.marketDayChange.signedPercent)
                 }
                 GridRow {
-                    metric("Beta to sector", String(format: "%.2f", facts.beta))
+                    metric("Beta to sector", NumberText.number(facts.beta, digits: 2))
                     metric("Expected from sector", facts.expectedMove.signedPercent)
                 }
                 GridRow {
-                    metric("Size vs normal day", String(format: "%.1f×", abs(facts.zScore)))
-                    metric("Volume vs average", String(format: "%.1f×", facts.volumeRatio))
+                    metric("Size vs normal day", NumberText.number(abs(facts.zScore)) + "×")
+                    metric("Volume vs average", NumberText.number(facts.volumeRatio) + "×")
                 }
             }
         }
     }
 
-    private func metric(_ label: String, _ value: String) -> some View {
+    private func metric(_ label: LocalizedStringKey, _ value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label).font(.caption).foregroundStyle(.secondary)
             Text(value).font(.subheadline.monospacedDigit().weight(.semibold))

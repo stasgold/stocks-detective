@@ -89,6 +89,25 @@ Core logic tests (work on macOS or Linux):
 cd Packages/DetectiveKit && swift test
 ```
 
+## Languages
+
+English plus Arabic, Chinese (Simplified), Dutch, French, German, Hebrew, Hindi, Indonesian, Italian, Japanese, Korean, Polish, Portuguese (Brazil), Russian, Spanish, Thai, Turkish, Ukrainian and Vietnamese.
+
+- UI strings: `StocksDetective/Resources/Localizable.xcstrings` (String Catalog, with plural rules).
+- Engine strings (verdicts, sectors, rule-based reports): `Packages/DetectiveKit/Sources/DetectiveKit/Resources/<lang>.lproj/Localizable.strings`, so they also build on Linux.
+- Both are generated from `tools/l10n/<lang>.json` (keyed by `tools/l10n/keys.json`). Edit a translation there and run `python3 tools/l10n/build.py`; it checks every language for missing strings, format arguments and plural forms.
+- Numbers and percentages follow the user's locale (`NumberText`); prompts to the model stay in English.
+- Apple Intelligence writes reports in the user's language when the on-device model supports it, otherwise in English. The rule-based analyst is fully translated.
+
+New UI strings: build once in Xcode (the catalog picks them up), add the key to `keys.json` and each language file, then run the script.
+
+## App Store submission
+
+- `fastlane/metadata/<locale>/`: name, subtitle, keywords, description, promotional text and release notes for 25 storefront locales, plus categories and App Review notes. Edit `tools/appstore/metadata-*.json` and run `python3 tools/appstore/build_metadata.py` (checks App Store length limits). Upload with `fastlane deliver` or paste into App Store Connect.
+- Privacy policy: [PRIVACY.md](PRIVACY.md). Support: GitHub Issues. Both URLs and the copyright line are set in `build_metadata.py`.
+- Screenshots: `tools/appstore/screenshots.sh <6.9" simulator UDID>` captures 3 screens per language into `fastlane/screenshots/` (not committed).
+- `StocksDetective/Resources/PrivacyInfo.xcprivacy`: privacy manifest (no tracking, no data collected, UserDefaults reason CA92.1). In App Store Connect › App Privacy, answer "Data Not Collected".
+
 ## Project layout
 
 ```

@@ -1,0 +1,23 @@
+Çoğu uygulama size “AAPL %3 düştü” der. Stocks Detective ise nedenini söyler.
+
+Her varlık bir soruşturma dosyasına dönüşür:
+• Ne oldu – hareket, önemli rakamlarla birlikte sade bir dille.
+• Hangi haber yol açtı – hareketi en iyi açıklayan manşetler, kaynaklarıyla.
+• Haklı mı? – bir hüküm: Haklı, Aşırı tepki, Yetersiz tepki, Açıklanamayan veya Sadece gürültü.
+• Sırada ne izlenmeli – önümüzdeki günlerde kontrol edilecek somut noktalar.
+
+NASIL ÇALIŞIR
+Dedektif, piyasa hareketlerini şirket haberlerinden ayırmak için her hisseyi sektör ETF’si ve S&P 500 ile karşılaştırır, hareketin normal bir güne ve hacme göre ne kadar olağandışı olduğunu ölçer ve manşetleri önem sırasına koyar.
+
+TASARIMI GEREĞİ GİZLİ
+Raporlar Apple Intelligence tarafından aygıtta yazılır; portföyünüz iPhone’unuzdan asla çıkmaz. Hesap yok, reklam yok, izleme yok. Apple Intelligence olmayan iPhone’larda yerleşik kural tabanlı analist her hareketi açıklar.
+
+ÖZELLİKLER
+• Günlük Brifing: tüm portföyünüz için tek bir hikâye ve onu kimin hareket ettirdiği
+• Dedektifi sorgulayın: her dosya hakkında takip soruları sorun
+• Yalnızca olağandışı, hisseye özgü hareketler için arka plan uyarıları
+• Aracı kurumunuzdan veya bir tablodan tablo yapıştırarak varlıkları içe aktarın
+• 1 günden tüm zamanlara etkileşimli fiyat grafikleri
+• Hemen denemek için demo portföy
+
+Stocks Detective piyasa hareketlerini eğitim amacıyla açıklar. Yatırım tavsiyesi değildir. Piyasa verileri gecikmeli olabilir.

@@ -272,3 +272,11 @@ final class LiveAppleIntelligenceTests: XCTestCase {
         print("AI ANSWER:", i.messages[1].text)
     }
 }
+
+final class BriefingWatchItemsTests: XCTestCase {
+    @MainActor func testWatchItemsAreDistinct() {
+        let items = DetectiveAI.uniqueWatchItems([["a", "b"], ["a", "c"], ["a"]])
+        XCTAssertEqual(items, ["a", "b", "c"])
+        XCTAssertEqual(DetectiveAI.uniqueWatchItems([]), [])
+    }
+}

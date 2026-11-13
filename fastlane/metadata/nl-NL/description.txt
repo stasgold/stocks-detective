@@ -1,0 +1,23 @@
+De meeste apps zeggen: ‘AAPL staat 3% lager.’ Stocks Detective vertelt je waarom.
+
+Elke positie wordt een dossier:
+• Wat er gebeurde – de beweging in gewone taal, met de cijfers die ertoe doen.
+• Welk nieuws het veroorzaakte – de krantenkoppen die de beweging het best verklaren, met bronnen.
+• Is het terecht? – een oordeel: Terecht, Overreactie, Onderreactie, Onverklaard of Gewoon ruis.
+• Waar je op moet letten – concrete punten voor de komende dagen.
+
+ZO WERKT HET
+De detective vergelijkt elk aandeel met zijn sector-ETF en de S&P 500 om marktbewegingen te scheiden van bedrijfsnieuws, meet hoe ongewoon de beweging is ten opzichte van een normale dag en het volume, en rangschikt de krantenkoppen op relevantie.
+
+PRIVÉ VANAF HET BEGIN
+Rapporten worden op het apparaat geschreven door Apple Intelligence, dus je portefeuille verlaat nooit je iPhone. Geen account, geen advertenties, geen tracking. Op iPhones zonder Apple Intelligence verklaart een ingebouwde regelgebaseerde analist elke beweging.
+
+FUNCTIES
+• Dagelijkse briefing: één verhaal voor je hele portefeuille en wie hem bewoog
+• Ondervraag de detective: stel vervolgvragen over elke zaak
+• Achtergrondmeldingen alleen bij ongewone, aandeelspecifieke bewegingen
+• Importeer posities door een tabel uit je broker of spreadsheet te plakken
+• Interactieve koersgrafieken van 1 dag tot alles
+• Demoportefeuille om het meteen te proberen
+
+Stocks Detective verklaart marktbewegingen voor educatieve doeleinden. Dit is geen beleggingsadvies. Marktgegevens kunnen vertraagd zijn.

@@ -11,8 +11,8 @@ enum AIEngine: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .onDevice: "On-device"
-        case .privateCloud: "Private Cloud"
+        case .onDevice: String(localized: "On-device")
+        case .privateCloud: String(localized: "Private Cloud")
         }
     }
 }

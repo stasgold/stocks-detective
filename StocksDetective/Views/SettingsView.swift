@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import DetectiveKit
 
 struct SettingsView: View {
     @Environment(AppModel.self) private var model
@@ -61,7 +62,7 @@ struct SettingsView: View {
                         }
                     if alertsEnabled {
                         VStack(alignment: .leading) {
-                            Text("Alert when a move is \(String(format: "%.1f", sensitivity))× a normal day")
+                            Text("Alert when a move is \(NumberText.number(sensitivity))× a normal day")
                             Slider(value: $sensitivity, in: 1.5...4, step: 0.5)
                         }
                     }

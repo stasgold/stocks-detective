@@ -11,3 +11,6 @@ Packages/DetectiveKit/.build/
 *.xcuserstate
 xcuserdata/
 .DS_Store
+
+# App Store screenshots (regenerate with tools/appstore/screenshots.sh)
+fastlane/screenshots/

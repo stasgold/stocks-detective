@@ -37,10 +37,11 @@ public enum ReportValidator {
     }
 
     static func percentages(in text: String) -> [Double] {
-        guard let regex = try? NSRegularExpression(pattern: #"(\d+(?:\.\d+)?)\s?%"#) else { return [] }
+        guard let regex = try? NSRegularExpression(pattern: #"(\d+(?:[.,]\d+)?)\s?%"#) else { return [] }
         let ns = text as NSString
         return regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap {
-            Double(ns.substring(with: $0.range(at: 1)))
+            // "3,4 %" (European decimal comma) reads as 3.4.
+            Double(ns.substring(with: $0.range(at: 1)).replacingOccurrences(of: ",", with: "."))
         }
     }
 }

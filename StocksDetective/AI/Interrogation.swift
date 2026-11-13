@@ -83,7 +83,7 @@ final class Interrogation {
 
         CASE BRIEF
         \(file.promptBrief())
-        YOUR EARLIER VERDICT: \(report?.verdict.label ?? "none") - \(report?.verdictReasoning ?? "")
+        YOUR EARLIER VERDICT: \(report?.verdict.englishLabel ?? "none") - \(report?.verdictReasoning ?? "")
         """
         if case let (s, a)? = ModelRouter.session(instructions: context, tools: tools) {
             session = s
@@ -92,9 +92,9 @@ final class Interrogation {
     }
 
     var suggestions: [String] {
-        ["Is this a buying opportunity or a warning sign?",
-         "How did \(file.facts.benchmark) and peers do today?",
-         "What would change your verdict?"]
+        [String(localized: "Is this a buying opportunity or a warning sign?"),
+         String(localized: "How did \(file.facts.benchmark) and peers do today?"),
+         String(localized: "What would change your verdict?")]
     }
 
     func ask(_ question: String) async {
@@ -102,7 +102,7 @@ final class Interrogation {
         guard !q.isEmpty, !isThinking else { return }
         messages.append(ChatMessage(role: .user, text: q))
         guard let session else {
-            messages.append(ChatMessage(role: .detective, text: "Follow-up questions need Apple Intelligence. Turn it on in Settings › Apple Intelligence & Siri on a supported iPhone."))
+            messages.append(ChatMessage(role: .detective, text: String(localized: "Follow-up questions need Apple Intelligence. Turn it on in Settings › Apple Intelligence & Siri on a supported iPhone.")))
             return
         }
         isThinking = true
@@ -118,7 +118,7 @@ final class Interrogation {
                 author = a
                 messages.append(ChatMessage(role: .detective, text: response.content))
             } else {
-                messages.append(ChatMessage(role: .detective, text: "I couldn't finish that line of inquiry (\(error.localizedDescription)). Try rephrasing."))
+                messages.append(ChatMessage(role: .detective, text: String(localized: "I couldn't finish that line of inquiry (\(error.localizedDescription)). Try rephrasing.")))
             }
         }
     }

@@ -1,0 +1,12 @@
+Stocks Detective explains why the stocks in a portfolio moved. No account or sign-in is needed.
+
+Quick start for review: on first launch tap "Try the demo portfolio". This loads five sample holdings with built-in sample prices and headlines (Settings > Demo data), so every screen works offline and every verdict type appears.
+
+- Tap a holding to open its case file (verdict, causes, evidence, chart).
+- "Interrogate the detective" opens a follow-up chat. It needs Apple Intelligence (iPhone 15 Pro or later with Apple Intelligence on); other devices get the built-in rule-based analyst and a message explaining this.
+- The Briefing tab summarizes the whole portfolio.
+- Settings > "Alert me about unusual moves" asks for notification permission; alerts are sent only from background refresh.
+
+All AI runs on-device with Apple's Foundation Models; the portfolio never leaves the device. Live prices and headlines come from public Yahoo Finance and Google News feeds and may be delayed.
+
+The app is educational and gives no investment advice: it never tells users to buy or sell, and it shows a disclaimer on every analysis screen. It does not trade, hold funds, or connect to brokerages.
