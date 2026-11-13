@@ -6,10 +6,13 @@ final class LocalizationTests: XCTestCase {
                             "pt-BR", "ru", "th", "tr", "uk", "vi", "zh-Hans"]
 
     private func table(_ lang: String) throws -> [String: String] {
-        // Read the file by path: Linux Foundation doesn't resolve region localizations like "pt-BR".
+        // Find the folder by name: SwiftPM on Linux may spell region folders differently ("pt_BR", "pt-br").
         let base = try XCTUnwrap(Bundle.module.resourceURL, "no resource bundle")
-        let url = base.appendingPathComponent("\(lang).lproj/Localizable.strings")
-        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path), "\(lang).lproj missing")
+        let folders = (try? FileManager.default.contentsOfDirectory(atPath: base.path))?.filter { $0.hasSuffix(".lproj") } ?? []
+        let normalize = { (s: String) in s.lowercased().replacingOccurrences(of: "_", with: "-") }
+        let folder = try XCTUnwrap(folders.first { normalize($0) == normalize("\(lang).lproj") },
+                                   "\(lang).lproj missing; found \(folders.sorted())")
+        let url = base.appendingPathComponent(folder).appendingPathComponent("Localizable.strings")
         let dict = try XCTUnwrap(NSDictionary(contentsOf: url) as? [String: String], "\(lang) does not parse")
         return dict
     }
