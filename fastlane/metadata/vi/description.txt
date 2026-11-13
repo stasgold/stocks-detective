@@ -1,0 +1,23 @@
+Hầu hết ứng dụng chỉ nói “AAPL giảm 3%.” Stocks Detective cho bạn biết vì sao.
+
+Mỗi khoản nắm giữ trở thành một hồ sơ vụ án:
+• Chuyện gì đã xảy ra – biến động bằng ngôn ngữ dễ hiểu, kèm những con số quan trọng.
+• Tin nào gây ra – các tiêu đề tin giải thích rõ nhất biến động, kèm nguồn.
+• Có hợp lý không? – một phán quyết: Hợp lý, Phản ứng thái quá, Phản ứng chưa đủ, Không giải thích được hoặc Chỉ là nhiễu.
+• Cần theo dõi gì – những điều cụ thể cần kiểm tra trong vài ngày tới.
+
+CÁCH HOẠT ĐỘNG
+Thám tử so sánh từng cổ phiếu với ETF ngành và S&P 500 để tách biến động thị trường khỏi tin tức công ty, đo mức độ bất thường của biến động so với một ngày và khối lượng bình thường, rồi xếp hạng tiêu đề tin theo mức độ liên quan.
+
+RIÊNG TƯ TỪ THIẾT KẾ
+Báo cáo được Apple Intelligence viết ngay trên thiết bị, nên danh mục của bạn không bao giờ rời khỏi iPhone. Không tài khoản, không quảng cáo, không theo dõi. Trên iPhone không có Apple Intelligence, nhà phân tích dựa trên quy tắc tích hợp sẵn sẽ giải thích mọi biến động.
+
+TÍNH NĂNG
+• Bản tin hằng ngày: một câu chuyện cho cả danh mục và ai đã làm nó biến động
+• Thẩm vấn thám tử: đặt câu hỏi tiếp theo về bất kỳ vụ án nào
+• Thông báo nền chỉ cho các biến động bất thường riêng của cổ phiếu
+• Nhập danh mục bằng cách dán bảng từ công ty chứng khoán hoặc bảng tính
+• Biểu đồ giá tương tác từ 1 ngày đến toàn thời gian
+• Danh mục demo để dùng thử ngay
+
+Stocks Detective giải thích biến động thị trường nhằm mục đích giáo dục. Đây không phải lời khuyên đầu tư. Dữ liệu thị trường có thể bị trễ.

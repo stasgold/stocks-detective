@@ -113,7 +113,7 @@ public struct PortfolioSnapshot: Sendable {
         for l in topContributors.prefix(holdings) {
             let headline = caseBySymbol[l.symbol]?.news.first?.article.title ?? "no headline"
             let weight = totalValue > 0 ? l.value / totalValue * 100 : 0
-            out.append("- \(l.symbol): \(fmt(l.dayChange))%, P&L \(fmt(l.dayPnL, 0)), weight \(Int(weight))%, \(l.character.label); top news: \(headline)")
+            out.append("- \(l.symbol): \(fmt(l.dayChange))%, P&L \(fmt(l.dayPnL, 0)), weight \(Int(weight))%, \(l.character.englishLabel); top news: \(headline)")
         }
         if let m = cases.first?.facts { out.append("S&P 500 today: \(fmt(m.marketDayChange))%") }
         return out.joined(separator: "\n")

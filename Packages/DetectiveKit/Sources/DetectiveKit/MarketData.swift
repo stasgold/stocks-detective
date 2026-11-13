@@ -30,8 +30,8 @@ public enum MarketDataError: Error, LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .badResponse(let s): "Market data request failed for \(s)."
-        case .noData(let s): "No price data for \(s). Check the ticker."
+        case .badResponse(let s): String(format: L("Market data request failed for %@."), s)
+        case .noData(let s): String(format: L("No price data for %@. Check the ticker."), s)
         }
     }
 }
@@ -70,7 +70,7 @@ public struct YahooMarketData: MarketDataProvider {
         ]
         // Independent tasks, each awaited before returning.
         let session = self
-        let jobs = feeds.compactMap { f in f.url.map { url in (f.defaultSource, Task { try? await session.get(url) }) } }
+        let jobs = feeds.compactMap { f in f.url.map { url in (f.defaultSource, Task<Data?, Never> { try? await session.get(url) }) } }
         var articles: [NewsArticle] = []
         for (defaultSource, job) in jobs {
             guard let data = await job.value else { continue }

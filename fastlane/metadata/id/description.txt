@@ -1,0 +1,23 @@
+Kebanyakan aplikasi hanya bilang “AAPL turun 3%.” Stocks Detective memberi tahu alasannya.
+
+Setiap kepemilikan menjadi berkas kasus:
+• Apa yang terjadi – pergerakan dalam bahasa sederhana, dengan angka-angka penting.
+• Berita apa penyebabnya – berita utama yang paling menjelaskan pergerakan, lengkap dengan sumbernya.
+• Apakah wajar? – sebuah putusan: Wajar, Reaksi berlebihan, Reaksi kurang, Tak terjelaskan, atau Hanya fluktuasi.
+• Apa yang perlu dipantau – hal-hal spesifik untuk dicek beberapa hari ke depan.
+
+CARA KERJANYA
+Detektif membandingkan setiap saham dengan ETF sektornya dan S&P 500 untuk memisahkan pergerakan pasar dari berita perusahaan, mengukur seberapa tidak biasa pergerakannya dibanding hari dan volume normal, lalu mengurutkan berita utama berdasarkan relevansi.
+
+PRIVAT SEJAK AWAL
+Laporan ditulis di perangkat oleh Apple Intelligence, jadi portofolio Anda tidak pernah meninggalkan iPhone. Tanpa akun, tanpa iklan, tanpa pelacakan. Di iPhone tanpa Apple Intelligence, analis berbasis aturan bawaan menjelaskan setiap pergerakan.
+
+FITUR
+• Ringkasan harian: satu cerita untuk seluruh portofolio dan siapa yang menggerakkannya
+• Interogasi detektif: ajukan pertanyaan lanjutan tentang kasus apa pun
+• Notifikasi latar belakang hanya untuk pergerakan tidak biasa yang khusus saham
+• Impor kepemilikan dengan menempelkan tabel dari broker atau spreadsheet
+• Grafik harga interaktif dari 1 hari hingga sepanjang waktu
+• Portofolio demo untuk langsung dicoba
+
+Stocks Detective menjelaskan pergerakan pasar untuk tujuan edukasi. Ini bukan saran investasi. Data pasar mungkin tertunda.

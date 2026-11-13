@@ -68,8 +68,8 @@ enum BackgroundInvestigator {
 
     static func notificationContent(report: InvestigationReport, facts: MovementFacts) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        content.title = "\(report.symbol) \(String(format: "%+.1f%%", facts.dayChange)) · \(report.verdict.label)"
-        content.body = report.headline + " — tap to open the case."
+        content.title = "\(report.symbol) \(NumberText.percent(facts.dayChange, signed: true)) · \(report.verdict.label)"
+        content.body = String(localized: "\(report.headline) — tap to open the case.")
         content.sound = .default
         content.userInfo = ["symbol": report.symbol]
         return content

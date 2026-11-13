@@ -11,7 +11,10 @@ public enum MoveCharacter: String, Codable, Sendable {
     /// A mix: the market moved, but the stock moved much more (or less).
     case amplified
 
-    public var label: String {
+    public var label: String { L(englishLabel) }
+
+    /// English label, used in prompts for the language model.
+    public var englishLabel: String {
         switch self {
         case .noise: "Normal noise"
         case .marketDriven: "Market-driven"

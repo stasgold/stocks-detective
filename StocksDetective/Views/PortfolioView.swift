@@ -124,7 +124,7 @@ struct PortfolioHeader: View {
                 }
             }
             if !snapshot.suspects.isEmpty {
-                Label("\(snapshot.suspects.count) unusual move\(snapshot.suspects.count == 1 ? "" : "s") under investigation", systemImage: "exclamationmark.magnifyingglass")
+                Label("\(snapshot.suspects.count) unusual moves under investigation", systemImage: "exclamationmark.magnifyingglass")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(Theme.accent)
                     .padding(.top, 4)

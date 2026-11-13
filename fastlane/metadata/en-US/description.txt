@@ -1,0 +1,23 @@
+Most apps tell you “AAPL is down 3%.” Stocks Detective tells you why.
+
+Every holding becomes a case file:
+• What happened – the move in plain language, with the numbers that matter.
+• Which news caused it – the headlines that best explain the move, with sources.
+• Is it justified? – a verdict: Justified, Overreaction, Underreaction, Unexplained or Just noise.
+• What to watch next – specific things to check in the coming days.
+
+HOW IT WORKS
+The detective compares each stock with its sector ETF and the S&P 500 to separate market moves from company news, measures how unusual the move is against the stock's normal day and volume, and ranks the headlines by relevance.
+
+PRIVATE BY DESIGN
+Reports are written on-device by Apple Intelligence, so your portfolio never leaves your iPhone. No account, no ads, no tracking. On iPhones without Apple Intelligence, a built-in rule-based analyst explains every move.
+
+FEATURES
+• Daily Briefing: one story for your whole portfolio and who moved it
+• Interrogate the detective: ask follow-up questions about any case
+• Background alerts only for unusual, stock-specific moves
+• Import holdings by pasting a table from your broker or a spreadsheet
+• Interactive price charts from 1 day to all time
+• Demo portfolio to try it instantly
+
+Stocks Detective explains market moves for educational purposes. It is not investment advice. Market data may be delayed.

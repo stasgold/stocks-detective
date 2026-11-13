@@ -1,0 +1,23 @@
+A maioria dos apps diz “AAPL caiu 3%”. O Stocks Detective diz por quê.
+
+Cada posição vira um dossiê:
+• O que aconteceu – o movimento em linguagem simples, com os números que importam.
+• Qual notícia causou – as manchetes que melhor explicam o movimento, com fontes.
+• É justificado? – um veredito: Justificado, Reação exagerada, Reação insuficiente, Sem explicação ou Só ruído.
+• O que acompanhar – pontos concretos para verificar nos próximos dias.
+
+COMO FUNCIONA
+O detetive compara cada ação com seu ETF setorial e com o S&P 500 para separar movimentos de mercado de notícias da empresa, mede o quanto o movimento é incomum em relação a um dia e um volume normais e ordena as manchetes por relevância.
+
+PRIVADO POR PADRÃO
+Os relatórios são escritos no dispositivo pela Apple Intelligence, então sua carteira nunca sai do seu iPhone. Sem conta, sem anúncios, sem rastreamento. Em iPhones sem Apple Intelligence, um analista integrado baseado em regras explica cada movimento.
+
+RECURSOS
+• Briefing diário: uma história para toda a sua carteira e quem a moveu
+• Interrogue o detetive: faça perguntas de acompanhamento sobre qualquer caso
+• Alertas em segundo plano só para movimentos incomuns e específicos de cada ação
+• Importe posições colando uma tabela da sua corretora ou de uma planilha
+• Gráficos de preço interativos, de 1 dia a todo o histórico
+• Carteira de demonstração para experimentar na hora
+
+O Stocks Detective explica os movimentos do mercado para fins educacionais. Não é recomendação de investimento. Os dados de mercado podem ter atraso.

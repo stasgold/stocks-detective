@@ -1,0 +1,830 @@
+{
+ "k001": {
+  "src": "app",
+  "en": "%@ (%@)"
+ },
+ "k002": {
+  "src": "app",
+  "en": "%@ (%@) today"
+ },
+ "k003": {
+  "src": "app",
+  "en": "%@ shares"
+ },
+ "k004": {
+  "src": "app",
+  "en": "%@ today"
+ },
+ "k005": {
+  "src": "app",
+  "en": "%@ — tap to open the case."
+ },
+ "k006": {
+  "src": "app",
+  "en": "%lld holdings found"
+ },
+ "k007": {
+  "src": "app",
+  "en": "%lld holdings moved more than usual on their own and are worth a closer look."
+ },
+ "k008": {
+  "src": "app",
+  "en": "%lld unusual moves under investigation"
+ },
+ "k009": {
+  "src": "app",
+  "en": "1 month"
+ },
+ "k010": {
+  "src": "app",
+  "en": "5 days"
+ },
+ "k011": {
+  "src": "app",
+  "en": "About"
+ },
+ "k012": {
+  "src": "app",
+  "en": "Add"
+ },
+ "k013": {
+  "src": "app",
+  "en": "Add a holding"
+ },
+ "k014": {
+  "src": "app",
+  "en": "Add holding"
+ },
+ "k015": {
+  "src": "app",
+  "en": "Add holdings on the Portfolio tab to get a daily briefing."
+ },
+ "k016": {
+  "src": "app",
+  "en": "Add your holdings. The detective will explain every move: what happened, which news caused it, whether it's justified, and what to watch next."
+ },
+ "k017": {
+  "src": "app",
+  "en": "Alert me about unusual moves"
+ },
+ "k018": {
+  "src": "app",
+  "en": "Alert when a move is %@× a normal day"
+ },
+ "k019": {
+  "src": "app",
+  "en": "Apple Intelligence"
+ },
+ "k020": {
+  "src": "app",
+  "en": "Apple Intelligence is investigating…"
+ },
+ "k021": {
+  "src": "app",
+  "en": "Apple Intelligence is still downloading. Using the rule-based analyst for now."
+ },
+ "k022": {
+  "src": "app",
+  "en": "Apple Intelligence is turned off for testing."
+ },
+ "k023": {
+  "src": "app",
+  "en": "Apple Intelligence is unavailable right now."
+ },
+ "k024": {
+  "src": "app",
+  "en": "Apple Intelligence · Private Cloud"
+ },
+ "k025": {
+  "src": "app",
+  "en": "Apple Intelligence · on-device"
+ },
+ "k026": {
+  "src": "app",
+  "en": "Ask follow-up questions about %@. The detective can pull prices and headlines for other tickers to compare."
+ },
+ "k027": {
+  "src": "app",
+  "en": "Ask the detective…"
+ },
+ "k028": {
+  "src": "app",
+  "en": "Average cost per share (optional)"
+ },
+ "k029": {
+  "src": "app",
+  "en": "Base"
+ },
+ "k030": {
+  "src": "app",
+  "en": "Beta to sector"
+ },
+ "k031": {
+  "src": "app",
+  "en": "Briefing"
+ },
+ "k032": {
+  "src": "app",
+  "en": "Cancel"
+ },
+ "k033": {
+  "src": "app",
+  "en": "Case went cold"
+ },
+ "k034": {
+  "src": "app",
+  "en": "Change"
+ },
+ "k035": {
+  "src": "app",
+  "en": "Chart unavailable"
+ },
+ "k036": {
+  "src": "app",
+  "en": "Close"
+ },
+ "k037": {
+  "src": "app",
+  "en": "Close to today's Private Cloud limit."
+ },
+ "k038": {
+  "src": "app",
+  "en": "Company-specific %lld%%"
+ },
+ "k039": {
+  "src": "app",
+  "en": "Compare against"
+ },
+ "k040": {
+  "src": "app",
+  "en": "Confidence"
+ },
+ "k041": {
+  "src": "app",
+  "en": "Confidence %lld percent"
+ },
+ "k042": {
+  "src": "app",
+  "en": "Continuous investigation"
+ },
+ "k043": {
+  "src": "app",
+  "en": "Copy the positions table from your broker, a spreadsheet or notes. Each line needs a ticker followed by the number of shares; other columns are ignored."
+ },
+ "k044": {
+  "src": "app",
+  "en": "Couldn't load %@ prices."
+ },
+ "k045": {
+  "src": "app",
+  "en": "Couldn't read these lines"
+ },
+ "k046": {
+  "src": "app",
+  "en": "Daily Briefing"
+ },
+ "k047": {
+  "src": "app",
+  "en": "Date"
+ },
+ "k048": {
+  "src": "app",
+  "en": "Day"
+ },
+ "k049": {
+  "src": "app",
+  "en": "Delete all"
+ },
+ "k050": {
+  "src": "app",
+  "en": "Delete all holdings"
+ },
+ "k051": {
+  "src": "app",
+  "en": "Delete all holdings?"
+ },
+ "k052": {
+  "src": "app",
+  "en": "Demo data"
+ },
+ "k053": {
+  "src": "app",
+  "en": "Done"
+ },
+ "k054": {
+  "src": "app",
+  "en": "Evidence locker"
+ },
+ "k055": {
+  "src": "app",
+  "en": "Expected from sector"
+ },
+ "k056": {
+  "src": "app",
+  "en": "Follow-up questions need Apple Intelligence. Turn it on in Settings › Apple Intelligence & Siri on a supported iPhone."
+ },
+ "k057": {
+  "src": "app",
+  "en": "Gathering evidence…"
+ },
+ "k058": {
+  "src": "app",
+  "en": "Get a higher limit"
+ },
+ "k059": {
+  "src": "app",
+  "en": "High / Low"
+ },
+ "k060": {
+  "src": "app",
+  "en": "Holdings not in the pasted list will be removed."
+ },
+ "k061": {
+  "src": "app",
+  "en": "How did %@ and peers do today?"
+ },
+ "k062": {
+  "src": "app",
+  "en": "I couldn't finish that line of inquiry (%@). Try rephrasing."
+ },
+ "k063": {
+  "src": "app",
+  "en": "Import"
+ },
+ "k064": {
+  "src": "app",
+  "en": "Import from paste"
+ },
+ "k065": {
+  "src": "app",
+  "en": "Import portfolio"
+ },
+ "k066": {
+  "src": "app",
+  "en": "Interrogate the detective"
+ },
+ "k067": {
+  "src": "app",
+  "en": "Interrogation"
+ },
+ "k068": {
+  "src": "app",
+  "en": "Investigating…"
+ },
+ "k069": {
+  "src": "app",
+  "en": "Is this a buying opportunity or a warning sign?"
+ },
+ "k070": {
+  "src": "app",
+  "en": "Key findings"
+ },
+ "k071": {
+  "src": "app",
+  "en": "Low"
+ },
+ "k072": {
+  "src": "app",
+  "en": "Market or company?"
+ },
+ "k073": {
+  "src": "app",
+  "en": "Model"
+ },
+ "k074": {
+  "src": "app",
+  "en": "No cases yet"
+ },
+ "k075": {
+  "src": "app",
+  "en": "No portfolio yet"
+ },
+ "k076": {
+  "src": "app",
+  "en": "No recent headlines found. A big move with no news is itself a clue: it can mean flows, rumors, or news that hasn't hit the wires yet."
+ },
+ "k077": {
+  "src": "app",
+  "en": "Not investment advice."
+ },
+ "k078": {
+  "src": "app",
+  "en": "On-device"
+ },
+ "k079": {
+  "src": "app",
+  "en": "On-device: private, offline, fast; reads the top 5 headlines per stock."
+ },
+ "k080": {
+  "src": "app",
+  "en": "Open"
+ },
+ "k081": {
+  "src": "app",
+  "en": "Open cases"
+ },
+ "k082": {
+  "src": "app",
+  "en": "Paste your holdings"
+ },
+ "k083": {
+  "src": "app",
+  "en": "Pasted holdings are added; tickers you already have get the new share count."
+ },
+ "k084": {
+  "src": "app",
+  "en": "Portfolio"
+ },
+ "k085": {
+  "src": "app",
+  "en": "Portfolio %@ today, led by %@"
+ },
+ "k086": {
+  "src": "app",
+  "en": "Portfolio %@ today, led by no single holding"
+ },
+ "k087": {
+  "src": "app",
+  "en": "Portfolio value"
+ },
+ "k088": {
+  "src": "app",
+  "en": "Position"
+ },
+ "k089": {
+  "src": "app",
+  "en": "Previous close"
+ },
+ "k090": {
+  "src": "app",
+  "en": "Price"
+ },
+ "k091": {
+  "src": "app",
+  "en": "Private Cloud"
+ },
+ "k092": {
+  "src": "app",
+  "en": "Private Cloud is ready."
+ },
+ "k093": {
+  "src": "app",
+  "en": "Private Cloud isn't available right now (needs an Apple Intelligence iPhone with it turned on). Using on-device."
+ },
+ "k094": {
+  "src": "app",
+  "en": "Private Cloud isn't included in this build. Using on-device."
+ },
+ "k095": {
+  "src": "app",
+  "en": "Private Cloud needs iOS 27 or later. Using on-device."
+ },
+ "k096": {
+  "src": "app",
+  "en": "Private Cloud: Apple's larger model on Private Cloud Compute. Reads up to 10 headlines per stock and your whole portfolio for the briefing. Needs internet; your data isn't stored or visible to Apple. Has a daily limit tied to your iCloud account. Falls back to on-device automatically."
+ },
+ "k097": {
+  "src": "app",
+  "en": "Quick read · rule-based"
+ },
+ "k098": {
+  "src": "app",
+  "en": "Re-investigate"
+ },
+ "k099": {
+  "src": "app",
+  "en": "Replace my current portfolio"
+ },
+ "k100": {
+  "src": "app",
+  "en": "Rewrite"
+ },
+ "k101": {
+  "src": "app",
+  "en": "Runs entirely on this iPhone. Works offline."
+ },
+ "k102": {
+  "src": "app",
+  "en": "S&P 500 today"
+ },
+ "k103": {
+  "src": "app",
+  "en": "Search ticker or company"
+ },
+ "k104": {
+  "src": "app",
+  "en": "Sector/market %lld%%"
+ },
+ "k105": {
+  "src": "app",
+  "en": "Send"
+ },
+ "k106": {
+  "src": "app",
+  "en": "Settings"
+ },
+ "k107": {
+  "src": "app",
+  "en": "Shares"
+ },
+ "k108": {
+  "src": "app",
+  "en": "Size vs normal day"
+ },
+ "k109": {
+  "src": "app",
+  "en": "Stock"
+ },
+ "k110": {
+  "src": "app",
+  "en": "Stocks Detective doesn't just tell you a stock is down 3%. It explains what happened, which news caused it, whether the move is justified, and what to watch next."
+ },
+ "k111": {
+  "src": "app",
+  "en": "Stocks Detective explains market moves for education. It is not investment advice. AI can make mistakes; check the evidence."
+ },
+ "k112": {
+  "src": "app",
+  "en": "Suspects"
+ },
+ "k113": {
+  "src": "app",
+  "en": "The detective compares each move with this sector ETF to tell market moves apart from company news."
+ },
+ "k114": {
+  "src": "app",
+  "en": "The verdict"
+ },
+ "k115": {
+  "src": "app",
+  "en": "This device doesn't support Apple Intelligence. Using the built-in rule-based analyst."
+ },
+ "k116": {
+  "src": "app",
+  "en": "Time"
+ },
+ "k117": {
+  "src": "app",
+  "en": "Today was driven by company-specific news."
+ },
+ "k118": {
+  "src": "app",
+  "en": "Today was mostly a market story."
+ },
+ "k119": {
+  "src": "app",
+  "en": "Today's Private Cloud limit is used up. Using on-device until it resets."
+ },
+ "k120": {
+  "src": "app",
+  "en": "Today's price, %@"
+ },
+ "k121": {
+  "src": "app",
+  "en": "Today's story"
+ },
+ "k122": {
+  "src": "app",
+  "en": "Try the demo portfolio"
+ },
+ "k123": {
+  "src": "app",
+  "en": "Turn on Apple Intelligence in Settings to get AI investigations."
+ },
+ "k124": {
+  "src": "app",
+  "en": "Use built-in sample prices and headlines instead of live market data. Live data comes from Yahoo Finance and Google News and may be delayed."
+ },
+ "k125": {
+  "src": "app",
+  "en": "Use “%@”"
+ },
+ "k126": {
+  "src": "app",
+  "en": "Vol %@"
+ },
+ "k127": {
+  "src": "app",
+  "en": "Volume"
+ },
+ "k128": {
+  "src": "app",
+  "en": "Volume vs average"
+ },
+ "k129": {
+  "src": "app",
+  "en": "Watch next"
+ },
+ "k130": {
+  "src": "app",
+  "en": "What happened"
+ },
+ "k131": {
+  "src": "app",
+  "en": "What to watch next"
+ },
+ "k132": {
+  "src": "app",
+  "en": "What would change your verdict?"
+ },
+ "k133": {
+  "src": "app",
+  "en": "While the app is closed, the detective checks your portfolio in the background and notifies you only about stock-specific moves, not ordinary market swings."
+ },
+ "k134": {
+  "src": "app",
+  "en": "Who moved your portfolio"
+ },
+ "k135": {
+  "src": "app",
+  "en": "Your analyst is writing today's briefing…"
+ },
+ "k136": {
+  "src": "app",
+  "en": "Your portfolio moved %@ (%@ USD)."
+ },
+ "k137": {
+  "src": "app",
+  "en": "update"
+ },
+ "k138": {
+  "src": "app",
+  "en": "vs high"
+ },
+ "k139": {
+  "src": "app",
+  "en": "“%@”"
+ },
+ "k140": {
+  "src": "pkg",
+  "en": "All"
+ },
+ "k141": {
+  "src": "pkg",
+  "en": "Sector & market move"
+ },
+ "k142": {
+  "src": "pkg",
+  "en": "%@ moved %@%%. With a beta of %@, that alone predicts about %@%% for %@."
+ },
+ "k143": {
+  "src": "pkg",
+  "en": "Company news"
+ },
+ "k144": {
+  "src": "pkg",
+  "en": "The most relevant headline points to a company-specific catalyst."
+ },
+ "k145": {
+  "src": "pkg",
+  "en": "Heavy trading"
+ },
+ "k146": {
+  "src": "pkg",
+  "en": "Volume was %@x normal, so this move had real conviction behind it."
+ },
+ "k147": {
+  "src": "pkg",
+  "en": "No clear catalyst"
+ },
+ "k148": {
+  "src": "pkg",
+  "en": "Neither the market nor the headlines explain this move well."
+ },
+ "k149": {
+  "src": "pkg",
+  "en": "A %@ move is within %@'s typical daily range of ±%@%%. Nothing to act on."
+ },
+ "k150": {
+  "src": "pkg",
+  "en": "The stock is moving in line with its sector. This is about the market, not the company."
+ },
+ "k151": {
+  "src": "pkg",
+  "en": "A %@x-typical move with no clear headline. Could be flows, a rumor, or news not yet reported. Treat with caution."
+ },
+ "k152": {
+  "src": "pkg",
+  "en": "Headlines lean the opposite way to the price. The market may be reacting to something else, or pricing in a second-order effect."
+ },
+ "k153": {
+  "src": "pkg",
+  "en": "The news supports the direction, but a %@x-typical move on light volume looks stretched."
+ },
+ "k154": {
+  "src": "pkg",
+  "en": "Heavy volume and supportive news, but the price has barely moved. The market may still be digesting it."
+ },
+ "k155": {
+  "src": "pkg",
+  "en": "The move lines up with the news, its size is plausible for this stock, and volume confirms it."
+ },
+ "k156": {
+  "src": "pkg",
+  "en": "Follow-up analyst estimate revisions over the next few days"
+ },
+ "k157": {
+  "src": "pkg",
+  "en": "Whether other analysts follow with similar rating changes"
+ },
+ "k158": {
+  "src": "pkg",
+  "en": "Official statements from regulators or the company"
+ },
+ "k159": {
+  "src": "pkg",
+  "en": "Next macro data release and Fed commentary"
+ },
+ "k160": {
+  "src": "pkg",
+  "en": "Company response or follow-up coverage of: %@"
+ },
+ "k161": {
+  "src": "pkg",
+  "en": "Whether volume stays elevated tomorrow (conviction) or fades (one-off)"
+ },
+ "k162": {
+  "src": "pkg",
+  "en": "Support levels: the stock is %@%% below its recent high"
+ },
+ "k163": {
+  "src": "pkg",
+  "en": "How %@ trades next session versus %@"
+ },
+ "k164": {
+  "src": "pkg",
+  "en": "%@ rose %@: %@"
+ },
+ "k165": {
+  "src": "pkg",
+  "en": "%@ fell %@: %@"
+ },
+ "k166": {
+  "src": "pkg",
+  "en": "%@ rose %@ while %@ moved %@%% and the S&P 500 moved %@%%. About %@%% of the move is explained by the sector; the rest (%@%%) is specific to %@."
+ },
+ "k167": {
+  "src": "pkg",
+  "en": "%@ fell %@ while %@ moved %@%% and the S&P 500 moved %@%%. About %@%% of the move is explained by the sector; the rest (%@%%) is specific to %@."
+ },
+ "k168": {
+  "src": "pkg",
+  "en": "Market data request failed for %@."
+ },
+ "k169": {
+  "src": "pkg",
+  "en": "No price data for %@. Check the ticker."
+ },
+ "k170": {
+  "src": "pkg",
+  "en": "Normal noise"
+ },
+ "k171": {
+  "src": "pkg",
+  "en": "Market-driven"
+ },
+ "k172": {
+  "src": "pkg",
+  "en": "Stock-specific"
+ },
+ "k173": {
+  "src": "pkg",
+  "en": "Amplified market move"
+ },
+ "k174": {
+  "src": "pkg",
+  "en": "today"
+ },
+ "k175": {
+  "src": "pkg",
+  "en": "past 5 days"
+ },
+ "k176": {
+  "src": "pkg",
+  "en": "past month"
+ },
+ "k177": {
+  "src": "pkg",
+  "en": "past 6 months"
+ },
+ "k178": {
+  "src": "pkg",
+  "en": "year to date"
+ },
+ "k179": {
+  "src": "pkg",
+  "en": "past year"
+ },
+ "k180": {
+  "src": "pkg",
+  "en": "past 5 years"
+ },
+ "k181": {
+  "src": "pkg",
+  "en": "all time"
+ },
+ "k182": {
+  "src": "pkg",
+  "en": "Technology"
+ },
+ "k183": {
+  "src": "pkg",
+  "en": "Communication"
+ },
+ "k184": {
+  "src": "pkg",
+  "en": "Consumer Discretionary"
+ },
+ "k185": {
+  "src": "pkg",
+  "en": "Consumer Staples"
+ },
+ "k186": {
+  "src": "pkg",
+  "en": "Energy"
+ },
+ "k187": {
+  "src": "pkg",
+  "en": "Financials"
+ },
+ "k188": {
+  "src": "pkg",
+  "en": "Health Care"
+ },
+ "k189": {
+  "src": "pkg",
+  "en": "Industrials"
+ },
+ "k190": {
+  "src": "pkg",
+  "en": "Materials"
+ },
+ "k191": {
+  "src": "pkg",
+  "en": "Real Estate"
+ },
+ "k192": {
+  "src": "pkg",
+  "en": "Utilities"
+ },
+ "k193": {
+  "src": "pkg",
+  "en": "Broad Market / Other"
+ },
+ "k194": {
+  "src": "pkg",
+  "en": "Justified"
+ },
+ "k195": {
+  "src": "pkg",
+  "en": "Overreaction"
+ },
+ "k196": {
+  "src": "pkg",
+  "en": "Underreaction"
+ },
+ "k197": {
+  "src": "pkg",
+  "en": "Unexplained"
+ },
+ "k198": {
+  "src": "pkg",
+  "en": "Just noise"
+ },
+ "k199": {
+  "src": "pkg",
+  "en": "earnings"
+ },
+ "k200": {
+  "src": "pkg",
+  "en": "guidance"
+ },
+ "k201": {
+  "src": "pkg",
+  "en": "analyst"
+ },
+ "k202": {
+  "src": "pkg",
+  "en": "legal/regulatory"
+ },
+ "k203": {
+  "src": "pkg",
+  "en": "product"
+ },
+ "k204": {
+  "src": "pkg",
+  "en": "deal"
+ },
+ "k205": {
+  "src": "pkg",
+  "en": "management"
+ },
+ "k206": {
+  "src": "pkg",
+  "en": "macro"
+ },
+ "k207": {
+  "src": "pkg",
+  "en": "capital"
+ }
+}

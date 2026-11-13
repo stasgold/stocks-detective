@@ -31,7 +31,7 @@ enum Theme {
 }
 
 extension Double {
-    var signedPercent: String { String(format: "%+.2f%%", self) }
+    var signedPercent: String { NumberText.percent(self, digits: 2, signed: true) }
     var currency: String { formatted(.currency(code: "USD")) }
     var signedCurrency: String { (self >= 0 ? "+" : "") + formatted(.currency(code: "USD")) }
 }
@@ -127,13 +127,14 @@ struct DaySparkline: View {
 }
 
 struct Card<Content: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     let systemImage: String
     @ViewBuilder var content: Content
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(title.uppercased(), systemImage: systemImage)
+            Label(title, systemImage: systemImage)
+                .textCase(.uppercase)
                 .font(.caption.weight(.bold))
                 .foregroundStyle(Theme.accent)
             content

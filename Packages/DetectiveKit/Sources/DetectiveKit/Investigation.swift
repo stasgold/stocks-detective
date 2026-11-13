@@ -7,7 +7,10 @@ public enum Verdict: String, Codable, Sendable, CaseIterable {
     case unexplained
     case noise
 
-    public var label: String {
+    public var label: String { L(englishLabel) }
+
+    /// English label, used in prompts for the language model.
+    public var englishLabel: String {
         switch self {
         case .justified: "Justified"
         case .overreaction: "Overreaction"
@@ -114,7 +117,7 @@ public struct CaseFile: Codable, Hashable, Sendable {
         lines.append("BETA \(fmt(f.beta, 2)); expected move from sector \(fmt(f.expectedMove))%; stock-specific (excess) move \(fmt(f.excessMove))%")
         lines.append("TYPICAL daily move ±\(fmt(f.typicalDailyMove))%; today is \(fmt(abs(f.zScore), 1))x typical")
         lines.append("VOLUME \(fmt(f.volumeRatio, 1))x its 20-day average; \(fmt(f.distanceFrom52wHigh))% from recent high")
-        lines.append("STATISTICAL READ: \(f.character.label)")
+        lines.append("STATISTICAL READ: \(f.character.englishLabel)")
         lines.append("COMPANY HEADLINES (most relevant first):")
         if news.isEmpty { lines.append("- none found") }
         for n in news.prefix(headlines) {

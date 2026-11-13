@@ -78,7 +78,9 @@ public enum Sector: String, CaseIterable, Codable, Sendable, Identifiable {
         }
     }
 
-    public var displayName: String {
+    public var displayName: String { L(englishName) }
+
+    var englishName: String {
         switch self {
         case .technology: "Technology"
         case .communication: "Communication"

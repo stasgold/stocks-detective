@@ -33,7 +33,12 @@ public enum ChartRange: String, CaseIterable, Codable, Sendable, Identifiable {
     public var isIntraday: Bool { self == .day || self == .fiveDays }
 
     /// "past month" etc., for the change badge.
-    public var periodLabel: String {
+    public var periodLabel: String { L(englishPeriodLabel) }
+
+    /// Button title for the range picker ("1D", "5D", …).
+    public var title: String { self == .all ? L("All") : rawValue }
+
+    var englishPeriodLabel: String {
         switch self {
         case .day: "today"
         case .fiveDays: "past 5 days"

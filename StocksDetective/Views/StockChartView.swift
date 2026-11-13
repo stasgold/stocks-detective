@@ -28,7 +28,7 @@ struct StockChartView: View {
                     }
                 } else if failed.contains(range) {
                     ContentUnavailableView("Chart unavailable", systemImage: "chart.xyaxis.line",
-                                           description: Text("Couldn't load \(range.rawValue) prices."))
+                                           description: Text("Couldn't load \(range.title) prices."))
                         .frame(height: 258)
                 } else {
                     ProgressView().frame(height: 258).frame(maxWidth: .infinity)
@@ -162,7 +162,7 @@ struct StockChartView: View {
                     selectedIndex = nil
                     range = r
                 } label: {
-                    Text(r.rawValue)
+                    Text(r.title)
                         .font(.footnote.weight(r == range ? .bold : .medium))
                         .frame(maxWidth: .infinity, minHeight: 32)
                         .foregroundStyle(r == range ? Color.white : Color.primary)
