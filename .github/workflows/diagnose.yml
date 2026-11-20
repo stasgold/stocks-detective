@@ -86,7 +86,7 @@ jobs:
           import json,sys
           def walk(n,d=0):
               if n.get('result') in ('Failed',) or n.get('nodeType')=='Failure Message':
-                  print('  '*d + (n.get('nodeType','')+': '+n.get('name',''))[:1500])
+                  print('  '*d + (n.get('nodeType','')+': '+n.get('name',''))[:12000])
               for c in n.get('children',[]): walk(c,d+1)
           for t in json.load(sys.stdin).get('testNodes',[]): walk(t)
           " || true
