@@ -36,7 +36,11 @@ final class ImportFlowUITests: XCTestCase {
         snapshot(app, "after-import")
         // Rows with swipe actions/context menus are exposed as cells, not plain buttons.
         let nvda = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'NVDA'")).firstMatch
-        XCTAssertTrue(nvda.waitForExistence(timeout: 20), "Imported holdings not shown")
+        if !nvda.waitForExistence(timeout: 20) {
+            print("SCREEN DUMP BEGIN\n\(app.debugDescription)\nSCREEN DUMP END")
+            XCTFail("Imported holdings not shown")
+            return
+        }
         nvda.tap()
         sleep(8)
         XCTAssertEqual(app.state, .runningForeground, "App crashed opening a case")
