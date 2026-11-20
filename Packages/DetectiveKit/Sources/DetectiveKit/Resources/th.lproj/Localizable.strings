@@ -66,3 +66,10 @@
 "management" = "ผู้บริหาร";
 "macro" = "มหภาค";
 "capital" = "เงินทุน";
+
+/* Newly listed stocks */
+"Newly listed" = "เพิ่งเข้าจดทะเบียน";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "มีประวัติการซื้อขายเพียง %@ วัน จึงยังไม่มีช่วงราคารายวันปกติให้เปรียบเทียบการเคลื่อนไหวนี้";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "หุ้นที่เพิ่งเข้าจดทะเบียน: การเคลื่อนไหวสอดคล้องกับพาดหัวข่าว แต่ด้วยประวัติที่สั้นมาก ยังประเมินขนาดไม่ได้";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "หุ้นที่เพิ่งเข้าจดทะเบียนโดยไม่มีพาดหัวข่าวชัดเจนอธิบายการเคลื่อนไหว ช่วงแรกของการซื้อขายมักผันผวน โปรดระมัดระวัง";
+"How the stock settles over its first weeks of trading" = "หุ้นทรงตัวอย่างไรในช่วงสัปดาห์แรกของการซื้อขาย";

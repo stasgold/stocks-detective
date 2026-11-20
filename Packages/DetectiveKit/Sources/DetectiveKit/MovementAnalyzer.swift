@@ -41,11 +41,17 @@ public struct MovementFacts: Codable, Hashable, Sendable {
     public let volumeRatio: Double        // latest volume / 20-day average
     public let distanceFrom52wHigh: Double // % below the high in the data window (<= 0)
     public let character: MoveCharacter
+    /// Trading days of price history behind these numbers.
+    public let historyDays: Int
+
+    /// Too little history (e.g. a new listing) for a meaningful "normal day".
+    public var limitedHistory: Bool { historyDays < Self.minimumHistory }
+    public static let minimumHistory = 10
 
     public init(symbol: String, benchmark: String, dayChange: Double, weekChange: Double, monthChange: Double,
                 benchmarkDayChange: Double, marketDayChange: Double, beta: Double, expectedMove: Double,
                 excessMove: Double, typicalDailyMove: Double, zScore: Double, volumeRatio: Double,
-                distanceFrom52wHigh: Double, character: MoveCharacter) {
+                distanceFrom52wHigh: Double, character: MoveCharacter, historyDays: Int = 252) {
         self.symbol = symbol
         self.benchmark = benchmark
         self.dayChange = dayChange
@@ -61,6 +67,7 @@ public struct MovementFacts: Codable, Hashable, Sendable {
         self.volumeRatio = volumeRatio
         self.distanceFrom52wHigh = distanceFrom52wHigh
         self.character = character
+        self.historyDays = historyDays
     }
 
     /// Share of the move explained by the benchmark, 0...1.
@@ -134,7 +141,10 @@ public enum MovementAnalyzer {
         let b = beta(stock: history, benchmark: benchHistory)
         let expected = b * benchDay
         let excess = day - expected
-        let typical = max(stdev(history), 0.25)
+        // New listings have no history yet; assume an IPO-like daily range rather than a
+        // tiny floor that would make every move look extreme.
+        let newListing = closes.count < MovementFacts.minimumHistory
+        let typical = max(stdev(history), newListing ? 3.0 : 0.25)
         let z = day / typical
 
         let volumes = stock.points.map(\.volume)
@@ -161,7 +171,8 @@ public enum MovementAnalyzer {
             zScore: z,
             volumeRatio: volRatio,
             distanceFrom52wHigh: fromHigh,
-            character: character
+            character: character,
+            historyDays: closes.count
         )
     }
 

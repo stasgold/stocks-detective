@@ -1,11 +1,17 @@
 import SwiftUI
+import SwiftData
 import Charts
 import DetectiveKit
 
 struct CaseDetailView: View {
     let symbol: String
     @Environment(AppModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
+    @Query private var holdings: [Holding]
     @State private var showingInterrogation = false
+    @State private var editing = false
+
+    private var holding: Holding? { holdings.first { $0.symbol == symbol && !$0.isDeleted } }
 
     var body: some View {
         ScrollView {
@@ -40,6 +46,11 @@ struct CaseDetailView: View {
         .navigationTitle(symbol)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if holding != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Edit holding", systemImage: "pencil") { editing = true }
+                }
+            }
             if model.ai.isAvailable {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Re-investigate", systemImage: "arrow.clockwise") {
@@ -53,6 +64,11 @@ struct CaseDetailView: View {
             // Opening a case always gets the full AI investigation.
             if model.reports[symbol]?.author.isAI != true, model.ai.isAvailable {
                 await model.investigate(symbol)
+            }
+        }
+        .sheet(isPresented: $editing) {
+            if let holding {
+                EditHoldingView(holding: holding) { dismiss() }
             }
         }
         .sheet(isPresented: $showingInterrogation) {

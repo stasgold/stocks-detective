@@ -66,3 +66,10 @@
 "management" = "الإدارة";
 "macro" = "الاقتصاد الكلي";
 "capital" = "رأس المال";
+
+/* Newly listed stocks */
+"Newly listed" = "مُدرج حديثًا";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "لا يتوفر سوى %@ يوم تداول من السجل، لذا لا يوجد بعد نطاق يومي معتاد لمقارنة هذه الحركة به.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "سهم مُدرج حديثًا: الحركة تتوافق مع العناوين، لكن مع هذا السجل القصير لا يمكن الحكم على حجمها بعد.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "سهم مُدرج حديثًا دون عنوان واضح يفسر الحركة. التداول المبكر متقلب غالبًا؛ تعامل بحذر.";
+"How the stock settles over its first weeks of trading" = "كيف يستقر السهم خلال أسابيع تداوله الأولى";

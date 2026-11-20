@@ -66,3 +66,10 @@
 "management" = "manajemen";
 "macro" = "makro";
 "capital" = "modal";
+
+/* Newly listed stocks */
+"Newly listed" = "Baru tercatat";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "Hanya ada riwayat %@ hari perdagangan, jadi belum ada rentang harian normal untuk membandingkan pergerakan ini.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Saham baru tercatat: pergerakannya sesuai dengan berita utama, tetapi dengan riwayat sesingkat ini besarnya belum bisa dinilai.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Saham baru tercatat tanpa berita utama yang jelas di balik pergerakannya. Perdagangan awal sering bergejolak; berhati-hatilah.";
+"How the stock settles over its first weeks of trading" = "Bagaimana saham ini stabil selama minggu-minggu pertama perdagangan";

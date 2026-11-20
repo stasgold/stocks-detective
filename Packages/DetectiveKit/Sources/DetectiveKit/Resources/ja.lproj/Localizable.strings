@@ -66,3 +66,10 @@
 "management" = "経営陣";
 "macro" = "マクロ";
 "capital" = "資本政策";
+
+/* Newly listed stocks */
+"Newly listed" = "新規上場";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "取引履歴は%@日分しかないため、この値動きと比べる通常の値幅はまだありません。";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "新規上場銘柄：値動きはニュースと一致していますが、履歴が短すぎるため規模はまだ判断できません。";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "新規上場銘柄で、値動きの背景となる明確なニュースはありません。上場直後は値動きが荒くなりがちです。注意してください。";
+"How the stock settles over its first weeks of trading" = "上場後数週間で株価がどう落ち着くか";

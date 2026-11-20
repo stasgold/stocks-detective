@@ -99,13 +99,16 @@ enum YahooChartParser {
     struct Result: Decodable {
         let meta: Meta
         let timestamp: [TimeInterval]?
-        let indicators: Indicators
+        let indicators: Indicators?
     }
     struct Meta: Decodable {
         let currency: String?
         let symbol: String
         let regularMarketPrice: Double?
         let regularMarketTime: TimeInterval?
+        let regularMarketVolume: Double?
+        let previousClose: Double?
+        let chartPreviousClose: Double?
         let longName: String?
         let shortName: String?
     }
@@ -117,16 +120,33 @@ enum YahooChartParser {
 
     static func parse(_ data: Data, symbol: String) throws -> (series: PriceSeries, name: String?) {
         let root = try JSONDecoder().decode(Root.self, from: data)
-        guard let r = root.chart.result?.first, let ts = r.timestamp, let q = r.indicators.quote.first,
-              let closes = q.close else { throw MarketDataError.noData(symbol) }
-        let vols = q.volume ?? []
+        guard let r = root.chart.result?.first else { throw MarketDataError.noData(symbol) }
+        let ts = r.timestamp ?? []
+        let q = r.indicators?.quote.first
+        let closes = q?.close ?? []
+        let vols = q?.volume ?? []
         var points: [PricePoint] = []
         for (i, t) in ts.enumerated() where i < closes.count {
             guard let c = closes[i] else { continue }
             let v = i < vols.count ? (vols[i] ?? 0) : 0
             points.append(PricePoint(date: Date(timeIntervalSince1970: t), close: c, volume: v))
         }
-        guard points.count >= 2 else { throw MarketDataError.noData(symbol) }
+        let name = r.meta.longName ?? r.meta.shortName
+        guard points.count >= 2 else {
+            // Newly listed (e.g. an IPO's first days): too little history, but Yahoo still reports
+            // today's price and the previous close / offer price.
+            guard let last = r.meta.regularMarketPrice ?? points.last?.close,
+                  let prev = r.meta.previousClose ?? r.meta.chartPreviousClose, prev > 0, last > 0 else {
+                throw MarketDataError.noData(symbol)
+            }
+            if points.isEmpty {
+                let when = r.meta.regularMarketTime.map { Date(timeIntervalSince1970: $0) } ?? Date()
+                points = [PricePoint(date: when, close: last, volume: r.meta.regularMarketVolume ?? 0)]
+            }
+            let series = PriceSeries(symbol: r.meta.symbol, currency: r.meta.currency ?? "USD",
+                                     points: points, lastPrice: last, previousClose: prev)
+            return (series, name)
+        }
         let last = r.meta.regularMarketPrice ?? points[points.count - 1].close
         // If the latest bar is today's session, yesterday's close is the bar before it.
         var prev = points[points.count - 1].close
@@ -138,7 +158,7 @@ enum YahooChartParser {
         }
         let series = PriceSeries(symbol: r.meta.symbol, currency: r.meta.currency ?? "USD",
                                  points: points, lastPrice: last, previousClose: prev)
-        return (series, r.meta.longName ?? r.meta.shortName)
+        return (series, name)
     }
 }
 

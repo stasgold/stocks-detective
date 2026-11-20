@@ -66,3 +66,10 @@
 "management" = "руководство";
 "macro" = "макро";
 "capital" = "капитал";
+
+/* Newly listed stocks */
+"Newly listed" = "Недавнее размещение";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "История торгов — всего %@ дн., поэтому пока нет обычного дневного диапазона, с которым можно сравнить это движение.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Недавно размещённая акция: движение согласуется с заголовками, но при такой короткой истории оценить его масштаб пока нельзя.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Недавно размещённая акция без явного заголовка, объясняющего движение. Первые торги часто волатильны; будьте осторожны.";
+"How the stock settles over its first weeks of trading" = "Как акция стабилизируется в первые недели торгов";

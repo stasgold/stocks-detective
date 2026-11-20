@@ -26,6 +26,19 @@ enum HoldingsEditor {
         return h
     }
 
+    /// Edits a holding. Returns true when the comparison sector changed (its case must be rebuilt).
+    @discardableResult
+    static func update(_ holding: Holding, shares: Double, costBasis: Double?, sector: Sector,
+                       in context: ModelContext, model: AppModel) -> Bool {
+        let sectorChanged = holding.sector != sector
+        holding.shares = shares
+        holding.costBasis = costBasis
+        holding.sector = sector
+        if sectorChanged { model.remove(holding.symbol) }
+        try? context.save()
+        return sectorChanged
+    }
+
     /// Applies pasted import rows. With `replace`, holdings not in the paste are removed.
     static func importRows(_ rows: [PortfolioImporter.Row], replace: Bool, existing: [Holding],
                            in context: ModelContext, model: AppModel) {

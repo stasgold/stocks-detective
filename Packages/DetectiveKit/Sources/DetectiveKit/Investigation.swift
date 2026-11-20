@@ -118,6 +118,9 @@ public struct CaseFile: Codable, Hashable, Sendable {
         lines.append("TYPICAL daily move ±\(fmt(f.typicalDailyMove))%; today is \(fmt(abs(f.zScore), 1))x typical")
         lines.append("VOLUME \(fmt(f.volumeRatio, 1))x its 20-day average; \(fmt(f.distanceFrom52wHigh))% from recent high")
         lines.append("STATISTICAL READ: \(f.character.englishLabel)")
+        if f.limitedHistory {
+            lines.append("NEW LISTING: only \(f.historyDays) trading day(s) of history, so there is no reliable normal range yet. Do not call the move an overreaction or underreaction based on its size.")
+        }
         lines.append("COMPANY HEADLINES (most relevant first):")
         if news.isEmpty { lines.append("- none found") }
         for n in news.prefix(headlines) {

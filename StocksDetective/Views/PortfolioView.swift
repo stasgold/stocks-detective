@@ -8,6 +8,8 @@ struct PortfolioView: View {
     @Query(sort: \Holding.addedAt) private var allHoldings: [Holding]
     private var holdings: [Holding] { allHoldings.filter { !$0.isDeleted } }
     @State private var showingAdd = false
+    @State private var editing: Holding?
+    @State private var deleteTarget: Holding?
     @State private var showingImport = LaunchOptions.openTab == "import"
     @State private var path: [String] = LaunchOptions.openCase.map { [$0] } ?? []
 
@@ -39,6 +41,17 @@ struct PortfolioView: View {
             .sheet(isPresented: $showingImport) {
                 ImportPortfolioView()
             }
+            .sheet(item: $editing) { h in
+                EditHoldingView(holding: h)
+            }
+            .confirmationDialog(Text("Delete \(deleteTarget?.symbol ?? "")?"),
+                                isPresented: Binding(get: { deleteTarget != nil }, set: { if !$0 { deleteTarget = nil } }),
+                                titleVisibility: .visible) {
+                Button("Delete", role: .destructive) {
+                    if let h = deleteTarget { HoldingsEditor.delete([h], in: context, model: model) }
+                    deleteTarget = nil
+                }
+            }
             .navigationDestination(for: String.self) { symbol in
                 CaseDetailView(symbol: symbol)
             }
@@ -62,8 +75,17 @@ struct PortfolioView: View {
                         HoldingRow(holding: h, file: model.cases[h.symbol], report: model.reports[h.symbol],
                                    isInvestigating: model.investigating.contains(h.symbol), failure: model.failures[h.symbol])
                     }
+                    // Swipe left: Delete / Edit. Long-press: same actions in a menu.
+                    .swipeActions(edge: .trailing) {
+                        Button("Delete", systemImage: "trash", role: .destructive) { deleteTarget = h }
+                        Button("Edit", systemImage: "pencil") { editing = h }
+                            .tint(Theme.accent)
+                    }
+                    .contextMenu {
+                        Button("Edit holding", systemImage: "pencil") { editing = h }
+                        Button("Delete holding", systemImage: "trash", role: .destructive) { deleteTarget = h }
+                    }
                 }
-                .onDelete(perform: delete)
             }
             Disclaimer().listRowBackground(Color.clear)
         }
@@ -79,10 +101,6 @@ struct PortfolioView: View {
     /// Imported holdings start with just a ticker; use the company name once we have it.
     private func fillInNames() { HoldingsEditor.fillInNames(holdings, cases: model.cases) }
 
-    private func delete(_ offsets: IndexSet) {
-        let list = sortedHoldings
-        HoldingsEditor.delete(offsets.map { list[$0] }, in: context, model: model)
-    }
 
     private var emptyState: some View {
         ContentUnavailableView {

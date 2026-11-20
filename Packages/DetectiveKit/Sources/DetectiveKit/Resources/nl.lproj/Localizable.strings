@@ -66,3 +66,10 @@
 "management" = "bestuur";
 "macro" = "macro";
 "capital" = "kapitaal";
+
+/* Newly listed stocks */
+"Newly listed" = "Pas genoteerd";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "Slechts %@ handelsdag(en) historie, dus er is nog geen normale dagelijkse bandbreedte om deze beweging mee te vergelijken.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Pas genoteerd aandeel: de beweging past bij de koppen, maar met zo weinig historie valt de omvang nog niet te beoordelen.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Pas genoteerd aandeel zonder duidelijke kop achter de beweging. De eerste handelsdagen zijn vaak volatiel; wees voorzichtig.";
+"How the stock settles over its first weeks of trading" = "Hoe het aandeel zich stabiliseert in de eerste handelsweken";

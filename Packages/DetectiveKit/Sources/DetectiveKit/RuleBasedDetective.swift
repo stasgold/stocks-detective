@@ -11,6 +11,11 @@ public enum RuleBasedDetective {
         let sentiment = file.newsSentiment
 
         var causes: [Cause] = []
+        if f.limitedHistory {
+            causes.append(Cause(title: L("Newly listed"),
+                                detail: String(format: L("Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet."),
+                                               NumberText.number(Double(f.historyDays), digits: 0))))
+        }
         if f.character == .marketDriven || f.character == .amplified {
             causes.append(Cause(
                 title: L("Sector & market move"),
@@ -41,7 +46,16 @@ public enum RuleBasedDetective {
         case .amplified, .stockSpecific:
             let newsAgrees = top != nil && sentiment * f.dayChange > 0
             let newsDisagrees = top != nil && sentiment * f.dayChange < 0 && abs(sentiment) > 0.2
-            if top == nil {
+            if f.limitedHistory {
+                // No baseline for "normal" yet, so never call a new listing's move over- or under-done.
+                if top != nil && !newsDisagrees {
+                    verdict = .justified
+                    reasoning = L("A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet.")
+                } else {
+                    verdict = .unexplained
+                    reasoning = L("A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution.")
+                }
+            } else if top == nil {
                 verdict = .unexplained
                 reasoning = String(format: L("A %@x-typical move with no clear headline. Could be flows, a rumor, or news not yet reported. Treat with caution."), NumberText.number(abs(f.zScore)))
             } else if newsDisagrees {
@@ -71,6 +85,7 @@ public enum RuleBasedDetective {
         }
         if f.volumeRatio >= 1.8 { watch.append(L("Whether volume stays elevated tomorrow (conviction) or fades (one-off)")) }
         if f.distanceFrom52wHigh < -20 { watch.append(String(format: L("Support levels: the stock is %@%% below its recent high"), NumberText.number(abs(f.distanceFrom52wHigh), digits: 0))) }
+        if f.limitedHistory { watch.insert(L("How the stock settles over its first weeks of trading"), at: 0) }
         watch.append(String(format: L("How %@ trades next session versus %@"), f.benchmark, file.symbol))
 
         let confidence: Int = {
@@ -78,6 +93,7 @@ public enum RuleBasedDetective {
             if top != nil { c += 20 }
             if f.character == .marketDriven || f.character == .noise { c += 15 }
             if verdict == .unexplained { c -= 15 }
+            if f.limitedHistory { c -= 10 }
             return c
         }()
 

@@ -136,6 +136,24 @@ final class HoldingsEditorTests: XCTestCase {
         XCTAssertEqual(all[0].shares, 7); XCTAssertEqual(all[0].costBasis, 150); XCTAssertEqual(all[0].sector, .broadMarket)
     }
 
+    func testUpdateEditsAndReportsSectorChange() async throws {
+        let c = try makeContainer()
+        let model = makeModel()
+        let h = HoldingsEditor.upsert(symbol: "AAPL", name: "Apple", shares: 1, costBasis: nil, sector: .technology, existing: [], in: c.mainContext)
+        await model.refresh([h.input])
+        XCTAssertNotNil(model.cases["AAPL"])
+
+        XCTAssertFalse(HoldingsEditor.update(h, shares: 25, costBasis: 180, sector: .technology, in: c.mainContext, model: model))
+        XCTAssertEqual(fetch(c)[0].shares, 25); XCTAssertEqual(fetch(c)[0].costBasis, 180)
+        XCTAssertNotNil(model.cases["AAPL"], "same sector keeps the case")
+
+        XCTAssertTrue(HoldingsEditor.update(h, shares: 25, costBasis: nil, sector: .broadMarket, in: c.mainContext, model: model))
+        XCTAssertEqual(fetch(c)[0].sector, .broadMarket); XCTAssertNil(fetch(c)[0].costBasis)
+        XCTAssertNil(model.cases["AAPL"], "new benchmark → case rebuilt")
+        await model.refresh([h.input])
+        XCTAssertEqual(model.cases["AAPL"]?.facts.benchmark, "SPY")
+    }
+
     func testImportAddsUpdatesAndReplaces() throws {
         let c = try makeContainer()
         let model = makeModel(demo: true)

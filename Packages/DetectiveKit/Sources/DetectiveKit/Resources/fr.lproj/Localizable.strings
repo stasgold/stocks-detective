@@ -66,3 +66,10 @@
 "management" = "direction";
 "macro" = "macro";
 "capital" = "capital";
+
+/* Newly listed stocks */
+"Newly listed" = "Récemment cotée";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "Seulement %@ jour(s) de cotation d'historique : il n'existe pas encore de fourchette quotidienne normale pour comparer ce mouvement.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Action récemment cotée : le mouvement concorde avec les titres, mais avec si peu d'historique son ampleur ne peut pas encore être jugée.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Action récemment cotée sans titre clair derrière le mouvement. Les premières séances sont souvent volatiles ; prudence.";
+"How the stock settles over its first weeks of trading" = "Comment l'action se stabilise au cours de ses premières semaines de cotation";

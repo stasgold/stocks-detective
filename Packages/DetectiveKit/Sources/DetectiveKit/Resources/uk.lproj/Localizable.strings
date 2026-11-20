@@ -66,3 +66,10 @@
 "management" = "керівництво";
 "macro" = "макро";
 "capital" = "капітал";
+
+/* Newly listed stocks */
+"Newly listed" = "Нещодавнє розміщення";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "Історія торгів — лише %@ дн., тож поки немає звичайного денного діапазону, з яким можна порівняти цей рух.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Нещодавно розміщена акція: рух узгоджується із заголовками, але за такої короткої історії оцінити його масштаб поки неможливо.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Нещодавно розміщена акція без чіткого заголовка, що пояснює рух. Перші торги часто волатильні; будьте обережні.";
+"How the stock settles over its first weeks of trading" = "Як акція стабілізується в перші тижні торгів";

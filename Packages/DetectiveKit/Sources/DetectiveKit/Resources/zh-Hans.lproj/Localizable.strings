@@ -66,3 +66,10 @@
 "management" = "管理层";
 "macro" = "宏观";
 "capital" = "资本";
+
+/* Newly listed stocks */
+"Newly listed" = "新上市";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "仅有%@个交易日的历史，因此还没有可用于比较此次波动的正常日波动范围。";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "新上市股票：此次波动与新闻标题一致，但历史太短，尚无法判断其幅度。";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "新上市股票，此次波动背后没有明确的新闻标题。上市初期交易往往波动较大，请谨慎对待。";
+"How the stock settles over its first weeks of trading" = "股票在上市头几周如何企稳";

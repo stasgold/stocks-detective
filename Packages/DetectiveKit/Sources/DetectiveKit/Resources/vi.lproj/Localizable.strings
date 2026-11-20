@@ -66,3 +66,10 @@
 "management" = "ban lãnh đạo";
 "macro" = "vĩ mô";
 "capital" = "vốn";
+
+/* Newly listed stocks */
+"Newly listed" = "Mới niêm yết";
+"Only %@ trading day(s) of history, so there's no normal daily range to compare this move against yet." = "Chỉ có %@ ngày giao dịch trong lịch sử, nên chưa có biên độ hằng ngày bình thường để so sánh biến động này.";
+"A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "Cổ phiếu mới niêm yết: biến động khớp với tin tức, nhưng với lịch sử quá ngắn thì chưa thể đánh giá độ lớn.";
+"A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "Cổ phiếu mới niêm yết, không có tin rõ ràng giải thích biến động. Giai đoạn giao dịch đầu thường nhiều biến động; hãy thận trọng.";
+"How the stock settles over its first weeks of trading" = "Cổ phiếu ổn định thế nào trong những tuần giao dịch đầu tiên";
