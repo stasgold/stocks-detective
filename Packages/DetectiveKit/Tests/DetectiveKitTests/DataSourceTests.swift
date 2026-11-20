@@ -137,7 +137,8 @@ final class YahooNetworkTests: XCTestCase {
     }
 
     func testChartRequestsRightRangeAndInterval() async throws {
-        StubURLProtocol.reset([.init(match: "/v8/finance/chart/", status: 200, body: Fixtures.chartJSON(closes: [1, 2]))])
+        // Enough bars that no range needs the new-listing fallback.
+        StubURLProtocol.reset([.init(match: "/v8/finance/chart/", status: 200, body: Fixtures.chartJSON(closes: [1, 2, 3, 4, 5, 6]))])
         for r in ChartRange.allCases {
             _ = try await yahoo.chart(for: "AAPL", range: r)
             let url = StubURLProtocol.requests.last!.url!.absoluteString

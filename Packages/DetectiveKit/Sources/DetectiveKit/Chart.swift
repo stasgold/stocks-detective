@@ -78,13 +78,27 @@ public struct ChartData: Codable, Hashable, Sendable {
     /// Previous session's close (drawn as a dashed line on 1D).
     public let previousClose: Double?
 
-    public init(symbol: String, range: ChartRange, currency: String, bars: [ChartBar], previousClose: Double?) {
+    /// The range had too little history (a new listing), so these are detailed intraday
+    /// prices covering the stock's whole life instead.
+    public let sinceListing: Bool
+
+    public init(symbol: String, range: ChartRange, currency: String, bars: [ChartBar], previousClose: Double?, sinceListing: Bool = false) {
         self.symbol = symbol
         self.range = range
         self.currency = currency
         self.bars = bars
         self.previousClose = previousClose
+        self.sinceListing = sinceListing
     }
+
+    /// How to label the time axis: by the range picked, or by what the bars actually span.
+    public var displayRange: ChartRange {
+        guard sinceListing, let first = bars.first?.date, let last = bars.last?.date else { return range }
+        return last.timeIntervalSince(first) < 20 * 3600 ? .day : .fiveDays
+    }
+
+    /// "past month", or "since listing" when the stock is younger than the range.
+    public var periodLabel: String { sinceListing ? L("since listing") : range.periodLabel }
 
     /// Price the period change is measured from: the close just before the period starts
     /// (how Yahoo Finance computes it), or the first bar when that isn't known.
@@ -106,7 +120,7 @@ public struct ChartData: Codable, Hashable, Sendable {
     /// X-axis length in bars. 1D reserves room for a full US session (6.5 h of 5-minute bars),
     /// so a chart drawn mid-day fills from the left like Yahoo's.
     public var xSlots: Int {
-        if range == .day, let first = bars.first?.date, let last = bars.last?.date,
+        if displayRange == .day, let first = bars.first?.date, let last = bars.last?.date,
            last.timeIntervalSince(first) < 6.5 * 3600 {
             return max(bars.count, 79)
         }
@@ -173,8 +187,19 @@ extension YahooMarketData {
         guard let url = URL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(s)?range=\(range.yahooRange)&interval=\(range.yahooInterval)&includePrePost=false") else {
             throw MarketDataError.noData(symbol)
         }
-        return try YahooChartParser.parseChart(try await get(url), symbol: symbol, range: range)
+        let chart = try YahooChartParser.parseChart(try await get(url), symbol: symbol, range: range)
+        // A new listing has too few daily bars to draw 1M/6M/1Y…: use 15-minute bars from
+        // its first days instead (Yahoo keeps those for the last 5 sessions).
+        guard !range.isIntraday, chart.bars.count < Self.minimumBars,
+              let detailURL = URL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(s)?range=5d&interval=15m&includePrePost=false"),
+              let detail = try? YahooChartParser.parseChart(try await get(detailURL), symbol: symbol, range: .fiveDays),
+              detail.bars.count > chart.bars.count else { return chart }
+        return ChartData(symbol: chart.symbol, range: range, currency: chart.currency, bars: detail.bars,
+                         previousClose: chart.previousClose ?? detail.previousClose, sinceListing: true)
     }
+
+    /// Fewer daily bars than this means the stock is too new for the range.
+    static let minimumBars = 5
 }
 
 extension DemoMarketData {

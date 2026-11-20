@@ -73,3 +73,4 @@
 "A newly listed stock: the move lines up with the headlines, but with so little trading history its size can't be judged yet." = "신규 상장 종목: 움직임은 헤드라인과 일치하지만, 이력이 너무 짧아 규모는 아직 판단할 수 없습니다.";
 "A newly listed stock with no clear headline behind the move. Early trading is often volatile; treat with caution." = "신규 상장 종목으로, 움직임을 설명하는 뚜렷한 헤드라인이 없습니다. 상장 초기 거래는 변동성이 큰 편이니 주의하세요.";
 "How the stock settles over its first weeks of trading" = "상장 후 첫 몇 주 동안 주가가 어떻게 안정되는지";
+"since listing" = "상장 이후";

@@ -26,6 +26,11 @@ struct StockChartView: View {
                         volumeChart(data)
                             .frame(height: 44)
                     }
+                } else if data != nil {
+                    // Loaded, but a single price point can't make a line (brand-new listing).
+                    ContentUnavailableView("Chart unavailable", systemImage: "chart.xyaxis.line",
+                                           description: Text("Not enough trading history for this range yet."))
+                        .frame(height: 258)
                 } else if failed.contains(range) {
                     ContentUnavailableView("Chart unavailable", systemImage: "chart.xyaxis.line",
                                            description: Text("Couldn't load \(range.title) prices."))
@@ -49,7 +54,7 @@ struct StockChartView: View {
             let base = data.baseline ?? bar.close
             Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 2) {
                 GridRow {
-                    Text(Self.tooltipDate(bar.date, range: range)).font(.caption.weight(.semibold))
+                    Text(Self.tooltipDate(bar.date, range: data.displayRange)).font(.caption.weight(.semibold))
                     Text("Close").foregroundStyle(.secondary)
                     Text(bar.close.formatted(.number.precision(.fractionLength(2)))).monospacedDigit()
                     Text((bar.close / base - 1) * 100 >= 0 ? "▲" : "▼").foregroundStyle(Theme.change(bar.close - base))
@@ -75,7 +80,7 @@ struct StockChartView: View {
                     Text("\(change >= 0 ? "+" : "")\(change.formatted(.number.precision(.fractionLength(2)))) (\(pct.signedPercent))")
                         .font(.subheadline.weight(.semibold).monospacedDigit())
                         .foregroundStyle(Theme.change(pct))
-                    Text(range.periodLabel).font(.subheadline).foregroundStyle(.secondary)
+                    Text(data?.periodLabel ?? range.periodLabel).font(.subheadline).foregroundStyle(.secondary)
                 } else {
                     Text(" ").font(.subheadline)
                 }
@@ -134,7 +139,7 @@ struct StockChartView: View {
                 AxisGridLine().foregroundStyle(.secondary.opacity(0.15))
                 AxisValueLabel {
                     if let i = value.as(Int.self), data.bars.indices.contains(i) {
-                        Text(Self.axisDate(data.bars[i].date, range: range))
+                        Text(Self.axisDate(data.bars[i].date, range: data.displayRange))
                     }
                 }
             }

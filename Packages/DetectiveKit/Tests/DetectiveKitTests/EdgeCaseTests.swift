@@ -124,3 +124,49 @@ final class NewListingTests: XCTestCase {
         XCTAssertFalse(makeCase(makeFacts(day: 1)).promptBrief().contains("NEW LISTING"))
     }
 }
+
+/// Charts for stocks younger than the chosen range (ANT on 1M/6M/YTD/1Y showed a spinner forever).
+final class NewListingChartTests: XCTestCase {
+    func testFallsBackToIntradayBarsSinceListing() async throws {
+        StubURLProtocol.reset([
+            .init(match: "range=1mo&interval=1d", status: 200, body: Fixtures.chartJSON(symbol: "ANT", closes: [97.17], prevClose: 83)),
+            .init(match: "range=5d&interval=15m", status: 200, body: Fixtures.chartJSON(symbol: "ANT", closes: [95, 99, 101, 97.17], prevClose: 83)),
+        ])
+        let c = try await YahooMarketData(session: StubURLProtocol.session()).chart(for: "ANT", range: .month)
+        XCTAssertTrue(c.sinceListing)
+        XCTAssertEqual(c.range, .month)
+        XCTAssertEqual(c.bars.count, 4, "uses the detailed bars")
+        XCTAssertEqual(c.previousClose, 83, "change still measured from the offer price")
+        XCTAssertEqual(c.changePercent!, 17.07, accuracy: 0.01)
+        XCTAssertEqual(c.periodLabel, "since listing")
+    }
+
+    func testEstablishedStocksDontRefetch() async throws {
+        StubURLProtocol.reset([.init(match: "range=1mo&interval=1d", status: 200, body: Fixtures.chartJSON(closes: [1, 2, 3, 4, 5, 6]))])
+        let c = try await YahooMarketData(session: StubURLProtocol.session()).chart(for: "AAPL", range: .month)
+        XCTAssertFalse(c.sinceListing)
+        XCTAssertEqual(c.periodLabel, ChartRange.month.periodLabel)
+        XCTAssertEqual(StubURLProtocol.requests.count, 1, "no extra request")
+    }
+
+    func testKeepsOriginalWhenDetailIsNoBetter() async throws {
+        StubURLProtocol.reset([.init(match: "range=1y&interval=1d", status: 200, body: Fixtures.chartJSON(closes: [1, 2])),
+                               .init(match: "range=1d&interval=5m", status: 200, body: Fixtures.chartJSON(closes: [1, 2]))])
+        let c = try await YahooMarketData(session: StubURLProtocol.session()).chart(for: "X", range: .year)
+        XCTAssertFalse(c.sinceListing, "detail request failed (404) → original kept")
+        XCTAssertEqual(c.bars.count, 2)
+        let day = try await YahooMarketData(session: StubURLProtocol.session()).chart(for: "X", range: .day)
+        XCTAssertFalse(day.sinceListing, "intraday ranges never fall back")
+    }
+
+    func testDisplayRangeFollowsWhatTheBarsSpan() {
+        func bars(_ hoursApart: Double, _ n: Int) -> [ChartBar] {
+            (0..<n).map { ChartBar(date: Date(timeIntervalSince1970: Double($0) * hoursApart * 3600), open: nil, high: nil, low: nil, close: 1, volume: 1) }
+        }
+        XCTAssertEqual(ChartData(symbol: "A", range: .year, currency: "USD", bars: bars(0.25, 20), previousClose: nil, sinceListing: true).displayRange, .day)
+        XCTAssertEqual(ChartData(symbol: "A", range: .year, currency: "USD", bars: bars(0.25, 200), previousClose: nil, sinceListing: true).displayRange, .fiveDays)
+        XCTAssertEqual(ChartData(symbol: "A", range: .year, currency: "USD", bars: bars(24, 5), previousClose: nil).displayRange, .year)
+        XCTAssertEqual(ChartData(symbol: "A", range: .year, currency: "USD", bars: bars(0.25, 20), previousClose: nil, sinceListing: true).xSlots, 79,
+                       "first-day chart leaves room for the full session")
+    }
+}
