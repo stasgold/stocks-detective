@@ -36,7 +36,12 @@ final class ImportFlowUITests: XCTestCase {
         snapshot(app, "after-import")
         // Rows with swipe actions/context menus are exposed as cells, not plain buttons.
         let nvda = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'NVDA'")).firstMatch
-        if !nvda.waitForExistence(timeout: 20) {
+        // Rows are sorted by today's surprise, so NVDA may be below the fold: scroll to it.
+        _ = app.staticTexts["Open cases"].waitForExistence(timeout: 20)
+        for _ in 0..<6 where !(nvda.exists && nvda.isHittable) {
+            app.swipeUp()
+        }
+        if !nvda.waitForExistence(timeout: 5) {
             let screen = app.debugDescription.components(separatedBy: "\n")
                 .filter { $0.contains("Cell") || $0.contains("StaticText") || $0.contains("Button") || $0.contains("Sheet") || $0.contains("Alert") }
                 .prefix(60).joined(separator: " | ")
