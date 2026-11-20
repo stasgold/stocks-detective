@@ -71,3 +71,39 @@ final class LiveChartTests: XCTestCase {
         }
     }
 }
+
+/// Debug a specific ticker: LIVE_NETWORK=1 LIVE_SYMBOLS=ANT,AAPL swift test --filter LiveSymbolProbe
+final class LiveSymbolProbe: XCTestCase {
+    func testProbeSymbols() async throws {
+        let env = ProcessInfo.processInfo.environment
+        try XCTSkipUnless(env["LIVE_NETWORK"] == "1", "Set LIVE_NETWORK=1 to hit live endpoints")
+        let yahoo = YahooMarketData()
+        for symbol in (env["LIVE_SYMBOLS"] ?? "ANT").split(separator: ",").map(String.init) {
+            print("PROBE ===== \(symbol)")
+            for (label, url) in [
+                ("chart 6mo", "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=6mo&interval=1d"),
+                ("chart 1d", "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=1d&interval=5m"),
+                ("search", "https://query1.finance.yahoo.com/v1/finance/search?q=\(symbol)&quotesCount=8&newsCount=0"),
+            ] {
+                do {
+                    let data = try await yahoo.get(URL(string: url)!)
+                    print("PROBE \(label): \(data.count) bytes: \(String(decoding: data.prefix(1200), as: UTF8.self))")
+                } catch {
+                    print("PROBE \(label): FAILED \(error)")
+                }
+            }
+            do {
+                let r = try await yahoo.priceSeries(for: symbol)
+                print("PROBE priceSeries OK: \(r.series.points.count) days, name \(r.name ?? "-")")
+            } catch {
+                print("PROBE priceSeries FAILED: \(error)")
+            }
+            do {
+                let file = try await CaseBuilder(provider: yahoo).buildCase(for: HoldingInput(symbol: symbol, sector: .guess(for: symbol), shares: 1))
+                print("PROBE case OK: \(file.facts.character.label), \(file.news.count) headlines")
+            } catch {
+                print("PROBE case FAILED: \(error)")
+            }
+        }
+    }
+}

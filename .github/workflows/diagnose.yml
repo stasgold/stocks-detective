@@ -7,6 +7,10 @@ on:
         description: Also run the Simulator UI tests
         type: boolean
         default: true
+      symbols:
+        description: Tickers to probe against Yahoo (comma-separated)
+        type: string
+        default: ANT
 
 jobs:
   live-data:
@@ -26,7 +30,8 @@ jobs:
         working-directory: Packages/DetectiveKit
         env:
           LIVE_NETWORK: "1"
-        run: swift test --filter Live 2>&1 | grep -E "CHART|PRICES|NEWS|FEED|CASE|REPORT|   - |STOCK|TODAY|BENCH|BETA|TYPICAL|VOLUME|STATISTICAL|HEADLINES|^- |error|failed|passed|Executed"
+          LIVE_SYMBOLS: ${{ inputs.symbols }}
+        run: swift test --filter Live 2>&1 | grep -E "PROBE|CHART|PRICES|NEWS|FEED|CASE|REPORT|   - |STOCK|TODAY|BENCH|BETA|TYPICAL|VOLUME|STATISTICAL|HEADLINES|^- |error|failed|passed|Executed"
 
   testflight-crashes:
     name: Fetch TestFlight crash reports
