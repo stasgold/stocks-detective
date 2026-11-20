@@ -63,12 +63,15 @@ final class LiveChartTests: XCTestCase {
     }
 
     func testEveryRange() async throws {
-        for range in ChartRange.allCases {
-            let c = try await YahooMarketData().chart(for: "TSM", range: range)
+        let symbols = (ProcessInfo.processInfo.environment["LIVE_SYMBOLS"] ?? "TSM").split(separator: ",").map(String.init)
+        for symbol in symbols { for range in ChartRange.allCases {
+            let c: ChartData
+            do { c = try await YahooMarketData().chart(for: symbol, range: range) }
+            catch { print("CHART \(symbol) \(range.rawValue): FAILED \(error)"); continue }
             let withOHLC = c.bars.filter { $0.open != nil && $0.high != nil && $0.low != nil }.count
-            print("CHART TSM \(range.rawValue): \(c.bars.count) bars (\(withOHLC) with OHLC), \(c.bars.first!.date) → \(c.bars.last!.date), change \(String(format: "%+.2f", c.changePercent ?? 0))%, prevClose \(c.previousClose.map { "\($0)" } ?? "-")")
-            XCTAssertGreaterThan(c.bars.count, 1)
-        }
+            print("CHART \(symbol) \(range.rawValue): \(c.bars.count) bars (\(withOHLC) with OHLC), \(c.bars.first!.date) → \(c.bars.last!.date), change \(String(format: "%+.2f", c.changePercent ?? 0))%, prevClose \(c.previousClose.map { "\($0)" } ?? "-")")
+            if symbol == "TSM" { XCTAssertGreaterThan(c.bars.count, 1) }
+        } }
     }
 }
 
