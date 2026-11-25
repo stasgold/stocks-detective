@@ -18307,6 +18307,482 @@
           }
         }
       }
+    },
+    "EPS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ربحية السهم"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BPA"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BPA"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WPA"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LPA"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HBK"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS"
+          }
+        }
+      }
+    },
+    "Earnings per share %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ربحية السهم %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewinn je Aktie %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beneficio por acción %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bénéfice par action %@"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רווח למניה %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति शेयर आय %@"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laba per saham %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utile per azione %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1株当たり利益 %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주당순이익 %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winst per aandeel %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zysk na akcję %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lucro por ação %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибыль на акцию %@"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "กำไรต่อหุ้น %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hisse başına kâr %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибуток на акцію %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lợi nhuận trên mỗi cổ phiếu %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每股收益 %@"
+          }
+        }
+      }
+    },
+    "Earnings yield %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عائد الأرباح %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewinnrendite %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rentabilidad por beneficio %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rendement bénéficiaire %@"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תשואת רווח %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आय प्रतिफल %@"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imbal hasil laba %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rendimento degli utili %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "益回り %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이익수익률 %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winstrendement %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stopa zysku %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rendimento de lucro %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доходность по прибыли %@"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "อัตราผลตอบแทนกำไร %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kazanç getirisi %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дохідність за прибутком %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tỷ suất lợi nhuận %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "盈利收益率 %@"
+          }
+        }
+      }
+    },
+    "EPS (last 12 months): green growing · yellow flat or down · red loss. E/P (earnings ÷ price): green ≥ 5% · yellow 2.5–5% · red below 2.5%." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ربحية السهم (آخر 12 شهرًا): أخضر متنامية · أصفر ثابتة أو متراجعة · أحمر خسارة. E/P (الأرباح ÷ السعر): أخضر ≥ 5% · أصفر 2.5–5% · أحمر أقل من 2.5%."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (letzte 12 Monate): grün wachsend · gelb stagnierend oder fallend · rot Verlust. E/P (Gewinn ÷ Kurs): grün ≥ 5 % · gelb 2,5–5 % · rot unter 2,5 %."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BPA (últimos 12 meses): verde en crecimiento · amarillo estable o a la baja · rojo pérdidas. E/P (beneficio ÷ precio): verde ≥ 5 % · amarillo 2,5–5 % · rojo por debajo del 2,5 %."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BPA (12 derniers mois) : vert en hausse · jaune stable ou en baisse · rouge perte. E/P (bénéfice ÷ cours) : vert ≥ 5 % · jaune 2,5–5 % · rouge sous 2,5 %."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רווח למניה (12 חודשים אחרונים): ירוק בצמיחה · צהוב יציב או בירידה · אדום הפסד. E/P (רווח ÷ מחיר): ירוק ≥ 5% · צהוב 2.5–5% · אדום מתחת ל־2.5%."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (पिछले 12 महीने): हरा बढ़ता हुआ · पीला स्थिर या घटता · लाल घाटा। E/P (आय ÷ मूल्य): हरा ≥ 5% · पीला 2.5–5% · लाल 2.5% से कम।"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (12 bulan terakhir): hijau tumbuh · kuning datar atau turun · merah rugi. E/P (laba ÷ harga): hijau ≥ 5% · kuning 2,5–5% · merah di bawah 2,5%."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (ultimi 12 mesi): verde in crescita · giallo stabile o in calo · rosso perdita. E/P (utile ÷ prezzo): verde ≥ 5% · giallo 2,5–5% · rosso sotto il 2,5%."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS（直近12か月）：緑＝増益・黄＝横ばいまたは減益・赤＝赤字。E/P（利益÷株価）：緑＝5%以上・黄＝2.5〜5%・赤＝2.5%未満。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS(최근 12개월): 초록 증가 · 노랑 정체 또는 감소 · 빨강 적자. E/P(이익 ÷ 주가): 초록 5% 이상 · 노랑 2.5–5% · 빨강 2.5% 미만."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WPA (laatste 12 maanden): groen groeiend · geel gelijk of dalend · rood verlies. E/P (winst ÷ koers): groen ≥ 5% · geel 2,5–5% · rood onder 2,5%."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (ostatnie 12 miesięcy): zielony rośnie · żółty bez zmian lub spada · czerwony strata. E/P (zysk ÷ cena): zielony ≥ 5% · żółty 2,5–5% · czerwony poniżej 2,5%."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LPA (últimos 12 meses): verde crescendo · amarelo estável ou em queda · vermelho prejuízo. E/P (lucro ÷ preço): verde ≥ 5% · amarelo 2,5–5% · vermelho abaixo de 2,5%."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (за 12 месяцев): зелёный — рост · жёлтый — без роста или снижение · красный — убыток. E/P (прибыль ÷ цена): зелёный ≥ 5% · жёлтый 2,5–5% · красный ниже 2,5%."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (12 เดือนล่าสุด): เขียว เติบโต · เหลือง ทรงตัวหรือลดลง · แดง ขาดทุน E/P (กำไร ÷ ราคา): เขียว ≥ 5% · เหลือง 2.5–5% · แดง ต่ำกว่า 2.5%"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HBK (son 12 ay): yeşil büyüyor · sarı yatay veya düşüyor · kırmızı zarar. E/P (kâr ÷ fiyat): yeşil ≥ %5 · sarı %2,5–5 · kırmızı %2,5'in altı."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (за 12 місяців): зелений — зростання · жовтий — без змін або спад · червоний — збиток. E/P (прибуток ÷ ціна): зелений ≥ 5% · жовтий 2,5–5% · червоний нижче 2,5%."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EPS (12 tháng gần nhất): xanh tăng trưởng · vàng đi ngang hoặc giảm · đỏ thua lỗ. E/P (lợi nhuận ÷ giá): xanh ≥ 5% · vàng 2,5–5% · đỏ dưới 2,5%."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每股收益（近12个月）：绿色＝增长 · 黄色＝持平或下降 · 红色＝亏损。E/P（收益÷股价）：绿色≥5% · 黄色2.5–5% · 红色低于2.5%。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

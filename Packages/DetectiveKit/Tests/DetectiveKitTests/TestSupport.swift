@@ -136,6 +136,10 @@ struct CountingProvider: MarketDataProvider {
         return try await inner.marketNews()
     }
     func search(_ query: String) async throws -> [SymbolMatch] { try await inner.search(query) }
+    func earnings(for symbol: String) async throws -> Earnings? {
+        await counter.hit("earnings:\(symbol)")
+        return try await inner.earnings(for: symbol)
+    }
     func chart(for symbol: String, range: ChartRange) async throws -> ChartData {
         await counter.hit("chart:\(symbol)")
         if failing.contains("chart") { throw MarketDataError.noData(symbol) }

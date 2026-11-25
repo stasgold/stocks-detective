@@ -126,6 +126,48 @@ struct DaySparkline: View {
     }
 }
 
+extension Theme {
+    static let caution = Color(red: 0.95, green: 0.76, blue: 0.15)
+
+    static func color(for rating: Earnings.Rating) -> Color {
+        switch rating {
+        case .good: up
+        case .fair: caution
+        case .poor: down
+        }
+    }
+}
+
+/// Traffic-light chips for EPS and earnings yield (E/P). Hidden for funds without earnings.
+struct EarningsChips: View {
+    let file: CaseFile
+
+    var body: some View {
+        if let e = file.earnings {
+            HStack(spacing: 6) {
+                chip(String(localized: "EPS") + " " + e.ttmEPS.formatted(.number.precision(.fractionLength(2))),
+                     rating: e.epsRating,
+                     spoken: String(localized: "Earnings per share \(e.ttmEPS.formatted(.number.precision(.fractionLength(2))))"))
+                if let ep = file.earningsYield {
+                    let text = (ep / 100).formatted(.percent.precision(.fractionLength(1)))
+                    chip("E/P " + text, rating: Earnings.yieldRating(ep),
+                         spoken: String(localized: "Earnings yield \(text)"))
+                }
+            }
+        }
+    }
+
+    private func chip(_ text: String, rating: Earnings.Rating, spoken: String) -> some View {
+        Text(verbatim: text)
+            .font(.caption2.weight(.semibold).monospacedDigit())
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .foregroundStyle(Theme.color(for: rating))
+            .background(Theme.color(for: rating).opacity(0.15), in: .capsule)
+            .accessibilityLabel(spoken)
+    }
+}
+
 struct Card<Content: View>: View {
     let title: LocalizedStringKey
     let systemImage: String

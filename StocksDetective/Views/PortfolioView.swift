@@ -69,7 +69,7 @@ struct PortfolioView: View {
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
             }
-            Section("Open cases") {
+            Section {
                 ForEach(sortedHoldings) { h in
                     NavigationLink(value: h.symbol) {
                         HoldingRow(holding: h, file: model.cases[h.symbol], report: model.reports[h.symbol],
@@ -85,6 +85,12 @@ struct PortfolioView: View {
                         Button("Edit holding", systemImage: "pencil") { editing = h }
                         Button("Delete holding", systemImage: "trash", role: .destructive) { deleteTarget = h }
                     }
+                }
+            } header: {
+                Text("Open cases")
+            } footer: {
+                if holdings.contains(where: { model.cases[$0.symbol]?.earnings != nil }) {
+                    Text("EPS (last 12 months): green growing · yellow flat or down · red loss. E/P (earnings ÷ price): green ≥ 5% · yellow 2.5–5% · red below 2.5%.")
                 }
             }
             Disclaimer().listRowBackground(Color.clear)
@@ -188,6 +194,7 @@ struct HoldingRow: View {
                     .lineLimit(2)
                 HStack(spacing: 6) {
                     VerdictBadge(verdict: report.verdict, compact: true)
+                    if let file { EarningsChips(file: file) }
                     if isInvestigating {
                         Label("Investigating…", systemImage: "apple.intelligence")
                             .font(.caption2).foregroundStyle(.secondary)

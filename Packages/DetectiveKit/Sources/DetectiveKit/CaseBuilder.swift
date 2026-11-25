@@ -20,7 +20,10 @@ public actor CaseBuilder {
     let provider: MarketDataProvider
     private var seriesCache: [String: (PriceSeries, String?, Date)] = [:]
     private var marketNewsCache: ([ScoredArticle], Date)?
+    private var earningsCache: [String: (Earnings?, Date)] = [:]
     private let ttl: TimeInterval = 5 * 60
+    /// Earnings change once a quarter; don't refetch on every refresh.
+    private let earningsTTL: TimeInterval = 12 * 3600
 
     public init(provider: MarketDataProvider) {
         self.provider = provider
@@ -31,6 +34,18 @@ public actor CaseBuilder {
         let r = try await provider.priceSeries(for: symbol)
         seriesCache[symbol] = (r.series, r.name, Date())
         return (r.series, r.name)
+    }
+
+    /// Cached for 12 hours. Failures aren't cached, so a network blip doesn't hide EPS all day.
+    func earnings(_ symbol: String) async -> Earnings? {
+        if let c = earningsCache[symbol], Date().timeIntervalSince(c.1) < earningsTTL { return c.0 }
+        do {
+            let e = try await provider.earnings(for: symbol)
+            earningsCache[symbol] = (e, Date())
+            return e
+        } catch {
+            return nil
+        }
     }
 
     func marketNews() async -> [ScoredArticle] {
@@ -61,11 +76,13 @@ public actor CaseBuilder {
         let rawNews = await companyNews(symbol)
         let marketNews = await marketNews()
         let intraday = try? await provider.chart(for: symbol, range: .day)
+        let earnings = await earnings(symbol)
 
         let facts = MovementAnalyzer.analyze(stock: stock, benchmark: bench, market: market)
         let news = NewsScorer.rank(rawNews, symbol: symbol, companyName: name, limit: 10)
         return CaseFile(symbol: symbol, companyName: name, sector: holding.sector, facts: facts,
-                        news: news, marketNews: marketNews, series: stock, intraday: intraday)
+                        news: news, marketNews: marketNews, series: stock, intraday: intraday,
+                        earnings: earnings)
     }
 }
 

@@ -19,6 +19,7 @@ struct FlakyProvider: MarketDataProvider {
     func news(for symbol: String) async throws -> [NewsArticle] { try await inner.news(for: symbol) }
     func marketNews() async throws -> [NewsArticle] { try await inner.marketNews() }
     func search(_ query: String) async throws -> [SymbolMatch] { try await inner.search(query) }
+    func earnings(for symbol: String) async throws -> Earnings? { try await inner.earnings(for: symbol) }
     func chart(for symbol: String, range: ChartRange) async throws -> ChartData { try await inner.chart(for: symbol, range: range) }
 }
 

@@ -170,3 +170,89 @@ final class NewListingChartTests: XCTestCase {
                        "first-day chart leaves room for the full session")
     }
 }
+
+final class EarningsTests: XCTestCase {
+    func testRatingsAndYield() {
+        let growing = Earnings(ttmEPS: 8, priorEPS: 6)
+        XCTAssertEqual(growing.growth!, 33.33, accuracy: 0.01)
+        XCTAssertEqual(growing.epsRating, .good)
+        XCTAssertEqual(Earnings(ttmEPS: 5, priorEPS: 6).epsRating, .fair, "profitable but shrinking")
+        XCTAssertEqual(Earnings(ttmEPS: 5, priorEPS: nil).epsRating, .fair, "growth unknown")
+        XCTAssertEqual(Earnings(ttmEPS: -7.87, priorEPS: -3).epsRating, .poor, "loss")
+        XCTAssertEqual(Earnings(ttmEPS: 0, priorEPS: 1).epsRating, .poor)
+        XCTAssertNil(Earnings(ttmEPS: 1, priorEPS: 0).growth)
+
+        XCTAssertEqual(growing.earningsYield(price: 100)!, 8, accuracy: 1e-9)
+        XCTAssertNil(growing.earningsYield(price: 0))
+        XCTAssertEqual(Earnings.yieldRating(6), .good)
+        XCTAssertEqual(Earnings.yieldRating(5), .good, "P/E 20 is the green edge")
+        XCTAssertEqual(Earnings.yieldRating(3), .fair)
+        XCTAssertEqual(Earnings.yieldRating(2.5), .fair)
+        XCTAssertEqual(Earnings.yieldRating(2), .poor)
+        XCTAssertEqual(Earnings.yieldRating(-8), .poor)
+    }
+
+    func testPromptLine() {
+        XCTAssertEqual(Earnings(ttmEPS: 8, priorEPS: 6).promptLine(price: 160),
+                       "VALUATION: TTM EPS 8.00 USD, +33.3% vs a year ago, earnings yield 5.0% (P/E 20)")
+        XCTAssertTrue(Earnings(ttmEPS: -7.87, priorEPS: nil).promptLine(price: 97).contains("(loss-making)"))
+    }
+
+    /// Yahoo's reply for AAPL (trimmed): TTM series every quarter.
+    func testParsesTrailingEPS() throws {
+        let json = #"""
+        {"timeseries":{"result":[{"meta":{"type":["trailingDilutedEPS"]},"trailingDilutedEPS":[
+        {"asOfDate":"2025-06-30","currencyCode":"USD","reportedValue":{"raw":6.59}},
+        {"asOfDate":"2026-06-30","currencyCode":"USD","reportedValue":{"raw":8.72}},
+        {"asOfDate":"2025-12-31","currencyCode":"USD","reportedValue":{"raw":7.46}},
+        {"asOfDate":"2026-03-31","currencyCode":"USD","reportedValue":{"raw":7.62}}]}],"error":null}}
+        """#
+        let e = try XCTUnwrap(YahooFundamentalsParser.parse(Data(json.utf8)))
+        XCTAssertEqual(e.ttmEPS, 8.72, "latest by date, not by position")
+        XCTAssertEqual(e.priorEPS, 6.59, "a year earlier")
+        XCTAssertEqual(e.currency, "USD")
+        XCTAssertNotNil(e.asOf)
+    }
+
+    /// ANT: only annual figures plus one TTM value; loss-making.
+    func testFallsBackToAnnualAndHandlesLosses() throws {
+        let annualOnly = #"""
+        {"timeseries":{"result":[{"annualDilutedEPS":[{"asOfDate":"2024-12-31","reportedValue":{"raw":-0.76}},
+        {"asOfDate":"2025-12-31","reportedValue":{"raw":-3.04}}]},{"meta":{"type":["trailingDilutedEPS"]}}]}}
+        """#
+        let e = try XCTUnwrap(YahooFundamentalsParser.parse(Data(annualOnly.utf8)))
+        XCTAssertEqual(e.ttmEPS, -3.04); XCTAssertEqual(e.priorEPS, -0.76)
+        XCTAssertEqual(e.epsRating, .poor)
+    }
+
+    func testNoEarningsForFundsOrJunk() {
+        let etf = #"{"timeseries":{"result":[{"meta":{"symbol":["VOO"],"type":["trailingDilutedEPS"]}}],"error":null}}"#
+        XCTAssertNil(YahooFundamentalsParser.parse(Data(etf.utf8)))
+        XCTAssertNil(YahooFundamentalsParser.parse(Data("nope".utf8)))
+    }
+
+    func testNetworkRequestAndCaseIntegration() async throws {
+        StubURLProtocol.reset([.init(match: "fundamentals-timeseries", status: 200, body: Data(#"{"timeseries":{"result":[{"trailingDilutedEPS":[{"asOfDate":"2026-06-30","reportedValue":{"raw":8.72}}]}]}}"#.utf8))])
+        let e = try await YahooMarketData(session: StubURLProtocol.session()).earnings(for: "AAPL")
+        XCTAssertEqual(e?.ttmEPS, 8.72)
+        XCTAssertTrue(StubURLProtocol.requests[0].url!.absoluteString.contains("type=trailingDilutedEPS,annualDilutedEPS"))
+
+        let builder = CaseBuilder(provider: DemoMarketData())
+        let aapl = try await builder.buildCase(for: HoldingInput(symbol: "AAPL", sector: .technology, shares: 1))
+        XCTAssertEqual(aapl.earnings?.ttmEPS, 7.21)
+        XCTAssertNotNil(aapl.earningsYield)
+        XCTAssertTrue(aapl.promptBrief().contains("VALUATION: TTM EPS 7.21"))
+        let spy = try await builder.buildCase(for: HoldingInput(symbol: "SPY", sector: .broadMarket, shares: 1))
+        XCTAssertNil(spy.earnings, "funds have no EPS")
+        XCTAssertNil(spy.earningsYield)
+        XCTAssertFalse(spy.promptBrief().contains("VALUATION"))
+    }
+
+    func testEarningsAreCachedButFailuresAreNot() async throws {
+        let provider = CountingProvider()
+        let builder = CaseBuilder(provider: provider)
+        _ = await builder.earnings("AAPL"); _ = await builder.earnings("AAPL")
+        let hits = await provider.counter.count("earnings:AAPL")
+        XCTAssertEqual(hits, 1)
+    }
+}

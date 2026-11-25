@@ -39,6 +39,15 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(model.cases.count, 5, "empty refresh is a no-op")
     }
 
+    func testRefreshCarriesEarnings() async {
+        let model = makeModel()
+        await model.refresh(demoInputs + [HoldingInput(symbol: "SPY", sector: .broadMarket, shares: 1)])
+        XCTAssertEqual(model.cases["JPM"]?.earnings?.epsRating, .good)
+        XCTAssertEqual(model.cases["TSLA"]?.earnings?.epsRating, .fair, "profitable but shrinking")
+        XCTAssertNotNil(model.cases["AAPL"]?.earningsYield)
+        XCTAssertNil(model.cases["SPY"]?.earnings, "funds have no EPS chips")
+    }
+
     func testRefreshQueuesHoldingsAddedMidway() async {
         let model = makeModel()
         let later = Task { await model.refresh(Array(demoInputs.prefix(2)) + [HoldingInput(symbol: "JPM", sector: .financials, shares: 1)]) }

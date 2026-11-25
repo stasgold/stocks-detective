@@ -219,6 +219,12 @@ final class FormattingTests: XCTestCase {
         XCTAssertFalse((-10.0).signedCurrency.hasPrefix("+"))
     }
 
+    func testEarningsColors() {
+        XCTAssertEqual(Theme.color(for: Earnings.Rating.good), Theme.up)
+        XCTAssertEqual(Theme.color(for: Earnings.Rating.fair), Theme.caution)
+        XCTAssertEqual(Theme.color(for: Earnings.Rating.poor), Theme.down)
+    }
+
     func testLaunchOptions() {
         let d = UserDefaults.standard
         d.set(true, forKey: "seedDemoPortfolio"); d.set("NVDA", forKey: "openCase"); d.set("briefing", forKey: "openTab")

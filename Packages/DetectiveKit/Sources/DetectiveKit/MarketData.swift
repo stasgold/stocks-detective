@@ -22,6 +22,8 @@ public protocol MarketDataProvider: Sendable {
     func marketNews() async throws -> [NewsArticle]
     func search(_ query: String) async throws -> [SymbolMatch]
     func chart(for symbol: String, range: ChartRange) async throws -> ChartData
+    /// Trailing-12-month EPS; nil for funds or when unknown.
+    func earnings(for symbol: String) async throws -> Earnings?
 }
 
 public enum MarketDataError: Error, LocalizedError {

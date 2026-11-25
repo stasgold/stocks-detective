@@ -85,9 +85,12 @@ public struct CaseFile: Codable, Hashable, Sendable {
     public let series: PriceSeries
     /// Last trading day's intraday prices (for the row sparkline), if available.
     public let intraday: ChartData?
+    /// Trailing-12-month earnings (nil for ETFs/funds).
+    public let earnings: Earnings?
 
     public init(symbol: String, companyName: String?, sector: Sector, facts: MovementFacts,
-                news: [ScoredArticle], marketNews: [ScoredArticle], series: PriceSeries, intraday: ChartData? = nil) {
+                news: [ScoredArticle], marketNews: [ScoredArticle], series: PriceSeries, intraday: ChartData? = nil,
+                earnings: Earnings? = nil) {
         self.symbol = symbol
         self.companyName = companyName
         self.sector = sector
@@ -96,7 +99,11 @@ public struct CaseFile: Codable, Hashable, Sendable {
         self.marketNews = marketNews
         self.series = series
         self.intraday = intraday
+        self.earnings = earnings
     }
+
+    /// Earnings yield (E/P, %) at the latest price.
+    public var earningsYield: Double? { earnings?.earningsYield(price: series.lastPrice) }
 
     public var newsSentiment: Double {
         let relevant = news.filter { $0.relevance >= 0.4 }
@@ -118,6 +125,7 @@ public struct CaseFile: Codable, Hashable, Sendable {
         lines.append("TYPICAL daily move ±\(fmt(f.typicalDailyMove))%; today is \(fmt(abs(f.zScore), 1))x typical")
         lines.append("VOLUME \(fmt(f.volumeRatio, 1))x its 20-day average; \(fmt(f.distanceFrom52wHigh))% from recent high")
         lines.append("STATISTICAL READ: \(f.character.englishLabel)")
+        if let e = earnings { lines.append(e.promptLine(price: series.lastPrice)) }
         if f.limitedHistory {
             lines.append("NEW LISTING: only \(f.historyDays) trading day(s) of history, so there is no reliable normal range yet. Do not call the move an overreaction or underreaction based on its size.")
         }
