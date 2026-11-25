@@ -87,6 +87,9 @@ final class LiveSymbolProbe: XCTestCase {
                 ("chart 6mo", "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=6mo&interval=1d"),
                 ("chart 1d", "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=1d&interval=5m"),
                 ("search", "https://query1.finance.yahoo.com/v1/finance/search?q=\(symbol)&quotesCount=8&newsCount=0"),
+                ("eps timeseries", "https://query1.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/\(symbol)?type=trailingDilutedEPS,quarterlyDilutedEPS,annualDilutedEPS&period1=\(Int(Date().timeIntervalSince1970) - 3 * 365 * 86400)&period2=\(Int(Date().timeIntervalSince1970))"),
+                ("quote v7", "https://query1.finance.yahoo.com/v7/finance/quote?symbols=\(symbol)"),
+                ("quoteSummary", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/\(symbol)?modules=defaultKeyStatistics,earningsTrend"),
             ] {
                 do {
                     let data = try await yahoo.get(URL(string: url)!)
